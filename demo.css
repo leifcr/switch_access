@@ -1,0 +1,91 @@
+body {
+  font-size: 13px;
+  font-family: Helvetica, arial, freesans, clean, sans-serif;
+  color: #333;
+  width: 620px;
+}
+h1,h2,h3,h4,h5,h6 {
+}
+#outerlogger {
+  border-radius: 20px;
+  border:1px solid #BBB;
+  background-color: #BBB;
+  position:absolute;
+  right:5px;
+  top:5%;
+  width:600px;
+  height:600px;
+  height:90%;
+  float:right;
+  opacity: 0.8;
+  padding:10px;
+}
+#outerlogger #logger{
+  height:570px;
+}
+
+#outerlogger h3 {
+  border:#999 solid 1px;
+  background-color: #fff;
+  width:100px;
+  padding:5px;
+  margin: 0px 0 10px 0;
+  border-radius:10px;
+  text-align: center;
+  height: 20px;
+}
+div.switch-elements-container {
+  clear:both;
+  height: 145px;
+  width: 600px;
+}
+
+*[class*='switch-element-'] , .switch-element {
+  float:left;
+  margin: 10px;
+  border:#999 solid 5px;
+  width: 100px;
+  height: 100px;
+  color: #000;
+  padding: 10px;
+  border-radius: 20px;
+}
+
+.largebox {
+  float:none;
+  clear:both;
+  width:400px;
+}
+
+.switch-highlight {
+  background-color: #eed;
+}
+.switch-highlight-activate {
+  background-color: #dda;
+}
+
+.switch-highlight-element {
+  border: solid #1cc 5px;
+  border-radius: 25px;
+  z-index: -1;
+}
+.switch-highlight-element-activate {
+  border-color: red;
+}
+
+pre.initdata {
+  padding:2px;
+  /*min-height: 10px;*/
+  border:1px solid #ddd;
+  background-color: #eee;
+  border-radius: 5px;
+}
+
+pre.output {
+  height:100px;
+  padding:10px;
+  /*min-height: 10px;*/
+  border:1px solid #555;
+  background-color: #eee;
+  border-radius: 10px;
+}
