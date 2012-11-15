@@ -122,6 +122,8 @@ There are two events dispatched that can be listened to:
       <li>The index of the activated element (0-based).</li>
     </ol>
   </dd>
+  <dt>scroll_offset</dt>
+  <dd>number of pixels to scroll in addition to the actual scrolling if an element is outside of the viewport/window <em>Default: 15</em></dd>
 </dl>
 
 
@@ -137,7 +139,11 @@ The settings in the cookie will override what you have in the initializer, in ca
 
 jQuery (1.7 or newer)
 
+#### For reading some settings from cookies:
 jQuery-cookie (https://github.com/carhartl/jquery-cookie) (only if you intend to use settings from a cookie)
+
+#### For development:
+log4javascript (http://log4javascript.org) only if debug is set to true
 
 ## Browser Compatibility
 

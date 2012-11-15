@@ -1,3 +1,11 @@
+###
+ Switch Access for webpages
+ (c) 2012 Leif Ringstad
+ Licensed under the freeBSD license (see license.txt)
+ Source: http://github.com/leifcr/switch-access
+ v 1.0.0
+###
+
 class SwitchAccess
   constructor: (options) ->
     if (window['__switch_access_sci'] != undefined)
@@ -29,6 +37,7 @@ class SwitchAccess
       delay_for_allowed_keypress: 250;
       single_switch_restart_on_activate: true
       highlight_on_activate_time: 1000
+      scroll_offset: 15
 
     @runtime = 
       active: false
@@ -103,8 +112,8 @@ class SwitchAccess
 
     if (@options.sort_element_list_after_numbers == true)
       @log "sorting list"
-      search_regexp_class = ///#{@options.element_class}-\d///
-      search_regexp_num = ///\d///
+      search_regexp_class = ///#{@options.element_class}-\d+///
+      search_regexp_num = ///\d+///
       temp_list.sort (a,b) ->
         item_class_name_a = search_regexp_class.exec($(a).attr("class"))
         item_class_name_b = search_regexp_class.exec($(b).attr("class"))
@@ -113,7 +122,8 @@ class SwitchAccess
         if (item_class_name_a != null && item_class_name_b != null)
           num_a = search_regexp_num.exec(item_class_name_a)
           num_b = search_regexp_num.exec(item_class_name_b)
-        num_a > num_b
+        window.__switch_access_sci.log "Sort: #{num_a} #{num_b}"
+        num_a - num_b
 
     @runtime.element_list = temp_list
 
@@ -154,6 +164,7 @@ class SwitchAccess
     @runtime.current_element = $(@runtime.element_list[@runtime.current_element_idx])
     @runtime.current_element.addClass(@options.highlight_element_class)
     @highLightElement($(@runtime.element_list[@runtime.current_element_idx]))
+    @makeElementVisible($(@runtime.element_list[@runtime.current_element_idx]))
     @runtime.next_element_idx++
     @runtime.current_element.trigger("switch-access-move", [@runtime.current_element, @runtime.current_element_idx + 1])
     return 1
@@ -174,8 +185,8 @@ class SwitchAccess
     @runtime.highlightdiv.height(size["height"])
 
     @runtime.highlightdiv.offset({top: coords["top"], left: coords["left"]})
-    # @runtime.highlightdiv.fadeIn(@options.move_fade_delay)
-    # @runtime.highlightdiv.show(@options.move_fade_delay)
+    @runtime.highlightdiv.fadeIn(@options.move_fade_delay)
+    @runtime.highlightdiv.show(@options.move_fade_delay)
     # @log "Move to position Top: #{coords["top"]} Left: #{coords["left"]}"
     # @log "Element data:"
     # @log "Widths:  Outer-margin:#{element.outerWidth(true)} Outer:#{element.outerWidth()} Inner: #{element.innerWidth()} Actual: #{element.width()}"
@@ -186,6 +197,19 @@ class SwitchAccess
     # @log "Heights: Outer:#{@runtime.highlightdiv.outerHeight(true)} Inner: #{@runtime.highlightdiv.innerHeight()} Actual: #{@runtime.highlightdiv.height()}"
     # @log "Pos: Left: #{@runtime.highlightdiv.offset().left} Top: #{@runtime.highlightdiv.offset().top}"
  
+  makeElementVisible: (element) ->
+    @log "makeElementVisible"
+    # positive scroll:
+    if ($(window).height() + $(document).scrollTop()) < (element.offset().top + element.outerHeight() + @options.scroll_offset)
+      diff_to_make_visible = (element.offset().top + element.outerHeight() + @options.scroll_offset) - ($(document).scrollTop() + $(window).height())
+      if (diff_to_make_visible > 0)
+        $(document).scrollTop(diff_to_make_visible + $(document).scrollTop())
+    # negative scroll:
+    else if (($(document).scrollTop()) > element.offset().top - @options.scroll_offset)
+      if (element.offset().top - @options.scroll_offset < 0)
+        $(document).scrollTop(0)
+      $(document).scrollTop(element.offset().top - @options.scroll_offset)
+
   activateElement: ->
     @log "activateElement"
     @runtime.action_triggered = true
@@ -253,6 +277,7 @@ class SwitchAccess
     return if $("div##{@options.highlight_element_id}").length > 0
     @log "addHighlightdiv"
     highlightdiv = $("<div id=\"#{@options.highlight_element_id}\" class=\"#{@options.highlight_element_id}\">&nbsp;</div>")
+    highlightdiv.css('position','absolute')
     $('body').append(highlightdiv)
     @runtime.highlightdiv = $("div##{@options.highlight_element_id}")
 

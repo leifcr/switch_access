@@ -2,6 +2,8 @@ body {
   font-size: 13px;
   font-family: Helvetica, arial, freesans, clean, sans-serif;
   color: #333;
+}
+.container {
   width: 620px;
 }
 h1,h2,h3,h4,h5,h6 {
@@ -34,13 +36,13 @@ h1,h2,h3,h4,h5,h6 {
   text-align: center;
   height: 20px;
 }
-div.switch-elements-container {
+div.switch-objects-container {
   clear:both;
   height: 145px;
   width: 600px;
 }
 
-*[class*='switch-element-'] , .switch-element {
+[class*="switch-element"] {
   float:left;
   margin: 10px;
   border:#999 solid 5px;
@@ -51,9 +53,29 @@ div.switch-elements-container {
   border-radius: 20px;
 }
 
+#switch-element-5 {
+  height: 50px;
+  width: 250px;
+  margin-left:100px;
+}
+
+.switch-element-8 {
+  height: 50px;
+}
+
+.switch-element-10 {
+  margin-top:80px;
+  height:25px;
+}
+
+.switch-element-12 {
+  width:250px;
+}
+
 .largebox {
   float:none;
   clear:both;
+  margin-top:15px;
   width:400px;
 }
 
@@ -82,10 +104,15 @@ pre.initdata {
 }
 
 pre.output {
-  height:100px;
+  /*height:10px;*/
   padding:10px;
   /*min-height: 10px;*/
   border:1px solid #555;
   background-color: #eee;
   border-radius: 10px;
+}
+
+/* TODO: improve coffescript to follow changes that affect position of the current element! (some sort of event binder/handler?)*/
+pre.largedemo {
+  height: 100px;
 }
