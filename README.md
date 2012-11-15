@@ -13,7 +13,10 @@
 ## Usage
 
 ### Example
-```
+
+HTML markup:
+
+```html
   <div class"switch-element">
     Div is the switch-element
     <a href="#">link inside a div.</a>
@@ -21,6 +24,8 @@
   <a href="#" class="switch-element">link is a switch element</a>
   <p class="switch-element"><a href="#">link inside a p.</a></p>
 ```
+
+Javascript:
 
 ```javascript
   $(document).ready(function(){
@@ -35,13 +40,13 @@
 All methods assume that you initiated the controller similar to the above example.
 
 ```javascript
-  # start switch access (Done automatically upon construction of object)
+  // start switch access (Done automatically upon construction of object)
   window.switch_access.start() 
 
-  # stop switch access
+  // stop switch access
   window.switch_access.stop() 
 
-  # Deinitialize (Must be done before deleting object)
+  // Deinitialize (Must be done before deleting object)
   window.switch_access.deinit()
   delete window.switch_access
 
@@ -103,6 +108,8 @@ All methods assume that you initiated the controller similar to the above exampl
   <dd>If the single switch movement should restart/go to index 0 when restarted<em>Default: false</em></dd>
   <dt>highlight_on_activate_time</dt>
   <dd>The time the objects have the classes specified in highlight_element_activate_class and activate_element_class. Note: if a delay for activating is setup, this time starts counting AFTER the actual activation of an element has occured <em>Default: 1000 ms</em> </dd>
+  <dt>scroll_offset</dt>
+  <dd>number of pixels to scroll in addition to the actual scrolling if an element is outside of the viewport/window <em>Default: 15</em></dd>
 </dl>
 
 ## Events
@@ -122,8 +129,6 @@ There are two events dispatched that can be listened to:
       <li>The index of the activated element (0-based).</li>
     </ol>
   </dd>
-  <dt>scroll_offset</dt>
-  <dd>number of pixels to scroll in addition to the actual scrolling if an element is outside of the viewport/window <em>Default: 15</em></dd>
 </dl>
 
 
@@ -139,10 +144,10 @@ The settings in the cookie will override what you have in the initializer, in ca
 
 jQuery (1.7 or newer)
 
-#### For reading some settings from cookies:
+##### For reading some settings from cookies:
 jQuery-cookie (https://github.com/carhartl/jquery-cookie) (only if you intend to use settings from a cookie)
 
-#### For development:
+##### For development:
 log4javascript (http://log4javascript.org) only if debug is set to true
 
 ## Browser Compatibility
