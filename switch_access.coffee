@@ -2,7 +2,7 @@
  Switch Access for webpages
  (c) 2012 Leif Ringstad
  Licensed under the freeBSD license (see license.txt)
- Source: http://github.com/leifcr/switch-access
+ Source: http://github.com/leifcr/switch_access
  v 1.0.1
 ###
 
@@ -169,7 +169,7 @@ class SwitchAccess
     @highLightElement($(@runtime.element_list[@runtime.current_element_idx]))
     @makeElementVisible($(@runtime.element_list[@runtime.current_element_idx]))
     @runtime.next_element_idx++
-    @runtime.current_element.trigger("switch-access-move", [@runtime.current_element, @runtime.current_element_idx + 1])
+    @runtime.current_element.trigger("switch_access-move", [@runtime.current_element, @runtime.current_element_idx + 1])
     return 1
 
   highLightElement: (element) ->
@@ -236,7 +236,7 @@ class SwitchAccess
     @log "Clicked Element: IDX: #{@runtime.current_element_idx} Element Tag: #{$(element_to_click).get(0).tagName.toLowerCase()} Text: #{$(element_to_click).text()}"
     if (element_to_click.length > 0)
       if (@options.delay_before_activating_element == 0)
-        @runtime.current_element.trigger("switch-access-activate", [@runtime.current_element, @runtime.current_element_idx, element_to_click])
+        @runtime.current_element.trigger("switch_access-activate", [@runtime.current_element, @runtime.current_element_idx, element_to_click])
         element_to_click[0].click()
         # if (ret == true) && element_to_click.is("a")
         #   document.location = element_to_click.attr("href")
@@ -261,7 +261,7 @@ class SwitchAccess
   activateElementCallBack: ->
     window.__switch_access_sci.log "activateElementCallBack"
     element_to_click = window.__switch_access_sci.runtime.element_to_click
-    window.__switch_access_sci.runtime.current_element.trigger("switch-access-activate", [window.__switch_access_sci.runtime.runtime.current_element, window.__switch_access_sci.runtime.runtime.current_element_idx, element_to_click])
+    window.__switch_access_sci.runtime.current_element.trigger("switch_access-activate", [window.__switch_access_sci.runtime.runtime.current_element, window.__switch_access_sci.runtime.runtime.current_element_idx, element_to_click])
     element_to_click[0].click() #trigger("click")
     # if (ret == true) && element_to_click.is("a")
     #   document.location = element_to_click.attr("href")

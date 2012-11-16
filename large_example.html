@@ -6,7 +6,7 @@
 </head>
 <body>
   <div class="container">
-    <h1>Switch-Access Example</h1>
+    <h1>switch_access Example</h1>
     <p>This is to show the scrolling functionality of the script. Any objects that aren't visible on the page will make to page scroll so the element is visible.</p>
     <p><a href="index.html">Back to original demo page.</a>
     <p>Use "Space" and "Enter" to move around and trigger actions. <!-- Or change the settings below.  -->
@@ -47,7 +47,7 @@
 <script src="jquery-cookie.js"></script>
 <script src="jquery.easing.1.3.js"></script>
 <script src="log4javascript.js"></script>
-<script src="switch-access.js"></script>
+<script src="switch_access.js"></script>
 <!-- <script src="./test.js"></script> -->
 <script type="text/javascript">
   $(document).ready(function(){
@@ -58,7 +58,7 @@
       animate_scroll_time: 350
       // delay_before_activating_element: 1000
     });
-  $("[class*="+window.switch_access.options.element_class+"]").bind("switch-access-activate", function(event, param1, param2, param3) {
+  $("[class*="+window.switch_access.options.element_class+"]").bind("switch_access-activate", function(event, param1, param2, param3) {
     var text = "Activated: "+ param1.get(0).tagName.toLowerCase() + "\nIndex: " + param2 + "\nClasses: " + param1.attr("class");
     text += "\n"
     text += "Clicked:"+ param3.get(0).tagName.toLowerCase() + "\nClasses: " + param3.attr("class");
@@ -67,7 +67,7 @@
     }
     $(".output").text(text);
   });
-  $("[class*="+window.switch_access.options.element_class+"]").bind("switch-access-move", function(event, param1, param2) {
+  $("[class*="+window.switch_access.options.element_class+"]").bind("switch_access-move", function(event, param1, param2) {
     $(".output").text("Moved to: "+ param1.get(0).tagName.toLowerCase() + "\nIndex: " + param2 + "\nClasses: " + param1.attr("class"));
   });
 
