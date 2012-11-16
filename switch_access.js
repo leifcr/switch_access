@@ -190,7 +190,7 @@
       this.highLightElement($(this.runtime.element_list[this.runtime.current_element_idx]));
       this.makeElementVisible($(this.runtime.element_list[this.runtime.current_element_idx]));
       this.runtime.next_element_idx++;
-      this.runtime.current_element.trigger("switch_access-move", [this.runtime.current_element, this.runtime.current_element_idx + 1]);
+      this.runtime.current_element.trigger("switch-access-move", [this.runtime.current_element, this.runtime.current_element_idx + 1]);
       return 1;
     };
 
@@ -255,7 +255,7 @@
       this.log("Clicked Element: IDX: " + this.runtime.current_element_idx + " Element Tag: " + ($(element_to_click).get(0).tagName.toLowerCase()) + " Text: " + ($(element_to_click).text()));
       if (element_to_click.length > 0) {
         if (this.options.delay_before_activating_element === 0) {
-          this.runtime.current_element.trigger("switch_access-activate", [this.runtime.current_element, this.runtime.current_element_idx, element_to_click]);
+          this.runtime.current_element.trigger("switch-access-activate", [this.runtime.current_element, this.runtime.current_element_idx, element_to_click]);
           element_to_click[0].click();
           if (this.options.number_of_switches === 1) {
             if (this.options.single_switch_restart_on_activate) {
@@ -284,7 +284,7 @@
       var element_to_click;
       window.__switch_access_sci.log("activateElementCallBack");
       element_to_click = window.__switch_access_sci.runtime.element_to_click;
-      window.__switch_access_sci.runtime.current_element.trigger("switch_access-activate", [window.__switch_access_sci.runtime.runtime.current_element, window.__switch_access_sci.runtime.runtime.current_element_idx, element_to_click]);
+      window.__switch_access_sci.runtime.current_element.trigger("switch-access-activate", [window.__switch_access_sci.runtime.runtime.current_element, window.__switch_access_sci.runtime.runtime.current_element_idx, element_to_click]);
       element_to_click[0].click();
       if (window.__switch_access_sci.options.number_of_switches === 1) {
         if (window.__switch_access_sci.options.single_switch_restart_on_activate) {
