@@ -5,7 +5,7 @@
  (c) 2012 Leif Ringstad
  Licensed under the freeBSD license (see license.txt)
  Source: http://github.com/leifcr/switch-access
- v 1.0.0
+ v 1.0.1
 */
 
 
@@ -46,7 +46,10 @@
         delay_for_allowed_keypress: 250,
         single_switch_restart_on_activate: true,
         highlight_on_activate_time: 1000,
-        scroll_offset: 15
+        ensure_visible_element: true,
+        scroll_offset: 15,
+        animate_scroll_time: 200,
+        easing: "linear"
       };
       this.runtime = {
         active: false,
@@ -212,18 +215,31 @@
     };
 
     SwitchAccess.prototype.makeElementVisible = function(element) {
-      var diff_to_make_visible;
+      var diff_to_make_visible, scroll_top, scrollval;
+      if (this.options.ensure_visible_element !== true) return;
       this.log("makeElementVisible");
-      if (($(window).height() + $(document).scrollTop()) < (element.offset().top + element.outerHeight() + this.options.scroll_offset)) {
+      scrollval = null;
+      scroll_top = $(document).scrollTop();
+      if (($(window).height() + scroll_top) < (element.offset().top + element.outerHeight() + this.options.scroll_offset)) {
         diff_to_make_visible = (element.offset().top + element.outerHeight() + this.options.scroll_offset) - ($(document).scrollTop() + $(window).height());
         if (diff_to_make_visible > 0) {
-          return $(document).scrollTop(diff_to_make_visible + $(document).scrollTop());
+          scrollval = diff_to_make_visible + scroll_top;
         }
-      } else if (($(document).scrollTop()) > element.offset().top - this.options.scroll_offset) {
+      } else if (scroll_top > (element.offset().top - this.options.scroll_offset)) {
         if (element.offset().top - this.options.scroll_offset < 0) {
-          $(document).scrollTop(0);
+          scrollval = 0;
+        } else {
+          scrollval = element.offset().top - this.options.scroll_offset;
         }
-        return $(document).scrollTop(element.offset().top - this.options.scroll_offset);
+      }
+      if ((scroll_top !== scrollval) && scrollval !== null) {
+        if (this.options.animate_scroll_time === 0) {
+          return $("html body").scrollTop(scrollval);
+        } else {
+          return $("html body").animate({
+            scrollTop: scrollval
+          }, this.options.animate_scroll_time, this.options.easing);
+        }
       }
     };
 

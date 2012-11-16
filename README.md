@@ -108,8 +108,14 @@ All methods assume that you initiated the controller similar to the above exampl
   <dd>If the single switch movement should restart/go to index 0 when restarted<em>Default: false</em></dd>
   <dt>highlight_on_activate_time</dt>
   <dd>The time the objects have the classes specified in highlight_element_activate_class and activate_element_class. Note: if a delay for activating is setup, this time starts counting AFTER the actual activation of an element has occured <em>Default: 1000 ms</em> </dd>
+  <dt>ensure_visible_element</dt>
+  <dd>Scroll to ensure the entire element in focus is visible. <em>Default: true</em> </dd>
   <dt>scroll_offset</dt>
   <dd>number of pixels to scroll in addition to the actual scrolling if an element is outside of the viewport/window <em>Default: 15</em></dd>
+  <dt>animate_scroll_time</dt>
+  <dd>Time in milliseconds the scroll will last (set to 0 if instant scroll is preferred) <em>Default: 200</em></dd>
+  <dt>easing</dt>
+  <dd>The easing to use for animation<em>Default: "linear"</em> </dd>
 </dl>
 
 ## Events
@@ -149,6 +155,9 @@ jQuery-cookie (https://github.com/carhartl/jquery-cookie) (only if you intend to
 
 ##### For development:
 log4javascript (http://log4javascript.org) only if debug is set to true
+
+##### For more easings on the animation:
+http://gsgd.co.uk/sandbox/jquery/easing/
 
 ## Browser Compatibility
 

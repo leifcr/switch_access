@@ -3,7 +3,7 @@
  (c) 2012 Leif Ringstad
  Licensed under the freeBSD license (see license.txt)
  Source: http://github.com/leifcr/switch-access
- v 1.0.0
+ v 1.0.1
 ###
 
 class SwitchAccess
@@ -37,7 +37,10 @@ class SwitchAccess
       delay_for_allowed_keypress: 250;
       single_switch_restart_on_activate: true
       highlight_on_activate_time: 1000
+      ensure_visible_element: true
       scroll_offset: 15
+      animate_scroll_time: 200
+      easing: "linear"
 
     @runtime = 
       active: false
@@ -198,17 +201,28 @@ class SwitchAccess
     # @log "Pos: Left: #{@runtime.highlightdiv.offset().left} Top: #{@runtime.highlightdiv.offset().top}"
  
   makeElementVisible: (element) ->
+    return unless @options.ensure_visible_element == true
     @log "makeElementVisible"
+    scrollval = null
+    scroll_top = $(document).scrollTop()
     # positive scroll:
-    if ($(window).height() + $(document).scrollTop()) < (element.offset().top + element.outerHeight() + @options.scroll_offset)
+    if ($(window).height() + scroll_top) < (element.offset().top + element.outerHeight() + @options.scroll_offset)
       diff_to_make_visible = (element.offset().top + element.outerHeight() + @options.scroll_offset) - ($(document).scrollTop() + $(window).height())
       if (diff_to_make_visible > 0)
-        $(document).scrollTop(diff_to_make_visible + $(document).scrollTop())
+        scrollval = diff_to_make_visible + scroll_top
     # negative scroll:
-    else if (($(document).scrollTop()) > element.offset().top - @options.scroll_offset)
+    else if (scroll_top > (element.offset().top - @options.scroll_offset))
       if (element.offset().top - @options.scroll_offset < 0)
-        $(document).scrollTop(0)
-      $(document).scrollTop(element.offset().top - @options.scroll_offset)
+        scrollval = 0
+      else
+        scrollval = element.offset().top - @options.scroll_offset
+
+    if (scroll_top != scrollval) && scrollval != null
+      if (@options.animate_scroll_time == 0)
+        $("html body").scrollTop(scrollval)
+      else
+        $("html body").animate({scrollTop: scrollval}, @options.animate_scroll_time, @options.easing);
+
 
   activateElement: ->
     @log "activateElement"
