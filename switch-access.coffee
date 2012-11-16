@@ -3,7 +3,7 @@
  (c) 2012 Leif Ringstad
  Licensed under the freeBSD license (see license.txt)
  Source: http://github.com/leifcr/switch-access
- v 1.0.0
+ v 1.0.1
 ###
 
 class SwitchAccess
