@@ -1,6 +1,6 @@
 # Switch Access 
 
-*switch-access.coffee* is a coffeescript that enables switch/keyboard control for navigating a webpage for AAC users.
+*switch_access.coffee* is a coffeescript that enables switch/keyboard control for navigating a webpage for AAC users.
 
 ## Features
 
@@ -122,14 +122,14 @@ All methods assume that you initiated the controller similar to the above exampl
 
 There are two events dispatched that can be listened to:
 <dl>
-  <dt>switch-access-activate</dt>
+  <dt>switch_access-activate</dt>
   <dd>This event is dispatched when a element is activated. Three parameters are sent with the element. 
     <ol><li>The current element (highlighted).</li>
       <li>The index of the activated element (0-based).</li>
       <li>The object that gets the "click" event after the activation of a link.</li>
     </ol>
   </dd>
-  <dt>switch-access-move</dt>
+  <dt>switch_access-move</dt>
   <dd>This event is dispatched when a element is moved to (highlighted). Two parameters are sent with the element. 
     <ol><li>The current element (highlighted).</li>
       <li>The index of the activated element (0-based).</li>
