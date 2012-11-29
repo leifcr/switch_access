@@ -113,6 +113,6 @@ pre.output {
 }
 
 /* TODO: improve coffescript to follow changes that affect position of the current element! (some sort of event binder/handler?)*/
-pre.largedemo {
+/*pre.largedemo {
   height: 100px;
-}
+}*/

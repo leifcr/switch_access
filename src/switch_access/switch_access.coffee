@@ -3,7 +3,7 @@
  (c) 2012 Leif Ringstad
  Licensed under the freeBSD license (see license.txt)
  Source: http://github.com/leifcr/switch_access
- v 1.0.1
+ v 1.1.0
 ###
 
 class SwitchAccess
@@ -41,6 +41,7 @@ class SwitchAccess
       scroll_offset: 15
       animate_scroll_time: 200
       easing: "linear"
+      size_check_interval: 10000
 
     @runtime = 
       active: false
@@ -53,6 +54,7 @@ class SwitchAccess
       action_triggered: false
       keypress_allowed: true
       element_to_click: null
+      verify_element_size_timer_id: null
 
     jQuery.extend @options, options
     @init();
@@ -69,7 +71,6 @@ class SwitchAccess
     @log("init")
 
     @readOptionsFromCookies();
-    @buildElementList();
     @start();
 
   setoptions: (options) ->
@@ -77,7 +78,6 @@ class SwitchAccess
     @log options
     @stop()
     jQuery.extend @options, options
-    @start()
 
   log: (msg, raw = false) ->
     #console.log msg if @options.nested_debug
@@ -136,9 +136,11 @@ class SwitchAccess
     @removeHighlightdiv()
 
   start: ->
-    return if (@options.number_of_switches == 0)
-    @addHighlightdiv()
+    return if (@options.number_of_switches == 0) || (@runtime.active == true)
     @log "start"
+    @buildElementList()
+    @runtime.active = true
+    @addHighlightdiv()
     # highlight first element
     @registerCallbacks()
     @showHighlightdiv()
@@ -148,8 +150,11 @@ class SwitchAccess
     @runtime.action_triggered = false
 
   stop: ->
+    return if (@runtime.active == false)
     @log "stop"
+    @runtime.active = false
     # hide highlight div
+    @removeHighlightFromElement(@runtime.current_element)
     @hideHighlightdiv()
     @stopSingleSwitchTimer()
 
@@ -158,39 +163,56 @@ class SwitchAccess
       @runtime.next_element_idx = 0
 
     @log "moveToNextElement IDX: #{@runtime.next_element_idx}"
-    if @runtime.current_element != null 
-      @runtime.current_element.removeClass(@options.activate_element_class)
-      @runtime.current_element.removeClass(@options.highlight_element_class)
-
-    @runtime.current_element_idx = @runtime.next_element_idx
+    @unRegisterResizeElementCallback(@runtime.current_element)
+    @removeHighlightFromElement(@runtime.current_element)
     @runtime.action_triggered = true
+    @runtime.current_element_idx = @runtime.next_element_idx
     @runtime.current_element = $(@runtime.element_list[@runtime.current_element_idx])
-    @runtime.current_element.addClass(@options.highlight_element_class)
-    @highLightElement($(@runtime.element_list[@runtime.current_element_idx]))
+    @highLightElement(@runtime.current_element)
     @makeElementVisible($(@runtime.element_list[@runtime.current_element_idx]))
     @runtime.next_element_idx++
+    @registerResizeElementCallback(@runtime.current_element)
     @runtime.current_element.trigger("switch-access-move", [@runtime.current_element, @runtime.current_element_idx + 1])
     return 1
 
+  removeHighlightFromElement: (element) ->
+    if element != null 
+      element.removeClass(@options.activate_element_class)
+      element.removeClass(@options.highlight_element_class)
+
   highLightElement: (element) ->
+    element.addClass(@options.highlight_element_class)
     return unless @options.use_highlight_div
     @log "highLightElement IDX: #{@runtime.current_element_idx} Tag: #{element.get(0).tagName.toLowerCase()} classes: #{element.attr("class")}"
-    coords = []
+    attribs = {
+      top: 0
+      left: 0
+      width: 0
+      height: 0
+    }
     size = []
 
-    size["width"]  = element.outerWidth(false)  + (@options.margin_to_element * 2)
-    size["height"] = element.outerHeight(false) + (@options.margin_to_element * 2)
+    attribs.width  = element.outerWidth(false)  + (@options.margin_to_element * 2)
+    attribs.height = element.outerHeight(false) + (@options.margin_to_element * 2)
    
-    coords["left"] = element.offset().left - @options.margin_to_element - ((@runtime.highlightdiv.outerWidth() - @runtime.highlightdiv.innerWidth())/2)
-    coords["top"]  = element.offset().top - @options.margin_to_element - ((@runtime.highlightdiv.outerWidth() - @runtime.highlightdiv.innerWidth())/2)
+    attribs.left = element.offset().left - @options.margin_to_element - ((@runtime.highlightdiv.outerWidth() - @runtime.highlightdiv.innerWidth())/2)
+    attribs.top  = element.offset().top - @options.margin_to_element - ((@runtime.highlightdiv.outerWidth() - @runtime.highlightdiv.innerWidth())/2)
 
-    @runtime.highlightdiv.width(size["width"])
-    @runtime.highlightdiv.height(size["height"])
+    @runtime.highlightdiv.width(attribs.width)
+    @runtime.highlightdiv.height(attribs.height)
 
-    @runtime.highlightdiv.offset({top: coords["top"], left: coords["left"]})
-    @runtime.highlightdiv.fadeIn(@options.move_fade_delay)
-    @runtime.highlightdiv.show(@options.move_fade_delay)
-    # @log "Move to position Top: #{coords["top"]} Left: #{coords["left"]}"
+    @runtime.highlightdiv.offset({top: attribs.top, left: attribs.left})
+    # @runtime.highlightdiv.show(@options.move_fade_delay)
+
+    sw_attr = {
+      sw_top:    element.offset().top
+      sw_left:   element.offset().left
+      sw_width:  element.outerWidth(false)
+      sw_height: element.outerHeight(false)
+    }
+
+    element.data(sw_attr)
+    # @log "Move to position Top: #{attribs.top} Left: #{attribs.left}"
     # @log "Element data:"
     # @log "Widths:  Outer-margin:#{element.outerWidth(true)} Outer:#{element.outerWidth()} Inner: #{element.innerWidth()} Actual: #{element.width()}"
     # @log "Heights: Outer-margin:#{element.outerHeight(true)} Outer:#{element.outerHeight()} Inner: #{element.innerHeight()} Actual: #{element.height()}"
@@ -350,9 +372,34 @@ class SwitchAccess
     else
       return true;
 
+  registerResizeElementCallback: (element) ->
+    return unless @options.use_highlight_div
+    # element.on("resize", (event) -> 
+    #   window.__switch_access_sci.callbackForResize(event))
+    @runtime.verify_element_size_timer_id = window.setInterval(window.__switch_access_sci.callBackForVerifySize, @options.size_check_interval)
+
+  unRegisterResizeElementCallback: (element) ->
+    return unless @options.use_highlight_div
+    # if element != null
+    #   element.off("resize")
+    window.clearInterval(@runtime.verify_element_size_timer_id)
+
+  callBackForVerifySize: ->
+    element = window.__switch_access_sci.runtime.current_element
+    return if element == null
+    if (element.outerWidth(false)   != element.data("sw_width") ||
+      element.outerHeight(false)    != element.data("sw_height") ||
+      element.offset().top          != element.data("sw_top") ||
+      element.offset().left         != element.data("sw_left"))
+        window.__switch_access_sci.highLightElement(window.__switch_access_sci.runtime.current_element)
+
+  callbackForResize: (event) ->
+    window.__switch_access_sci.log "callbackForResize"
+    window.__switch_access_sci.highLightElement(window.__switch_access_sci.runtime.current_element)
+
   startSingleSwitchTimer: ->
     @log "startSingleSwitchTimer"
-    @runtime.single_switch_timer_id = window.setInterval(window.__switch_access_sci.singleSwitchTimerCallback, @options.single_switch_move_time)
+    @runtime.single_switch_timer_id = window.setInterval(window.__switch_access_sci.singleSwitchTimerCallback, window.__switch_access_sci.options.single_switch_move_time)
 
   stopSingleSwitchTimer: ->
     @log "stopSingleSwitchTimer"
@@ -363,5 +410,15 @@ class SwitchAccess
     # $(document).on("keypress", @callbackForKeyPress)
     $(document).on("keypress", (event) -> 
       window.__switch_access_sci.callbackForKeyPress(event))
+    true
+
+
 
 window.SwitchAccess = SwitchAccess
+
+
+# TODO: Fix instance object timeout:
+# setTimeout(function(thisObj) { thisObj.methodToCall(); }, time, this)
+# this is for ie/ff/chrome ?
+# setTimeout( function() { return this.methodToCall.apply( this, arguments ); }, time );
+
