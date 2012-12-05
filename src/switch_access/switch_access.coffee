@@ -385,8 +385,14 @@ class SwitchAccess
 
     if (scroll_top != scrollval) && scrollval != null
       if (@options.visual.animate_scroll_time == 0)
+        # for FF
+        $("html").scrollTop(scrollval)
+        # for Chrome
         $("html body").scrollTop(scrollval)
       else
+        # for FF
+        $("html").animate({scrollTop: scrollval}, @options.visual.animate_scroll_time, @options.visual.easing);
+        # for Chrome
         $("html body").animate({scrollTop: scrollval}, @options.visual.animate_scroll_time, @options.visual.easing);
 
 
