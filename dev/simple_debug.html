@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>Switch access for webpages using coffeescript</title>
+  <link rel="stylesheet" type="text/css" href="../shared/example.css">
+</head>
+<body>
+  <div class="container">
+    <h3>Example</h3>
+    <div class="switch-objects-container">
+      <div class="switch-element-1">
+        <a href="#switch-element-anchor-1">a link inside "div" switch-element-1</a>
+      </div>
+      <a href="#switch-element-anchor-2" class="switch-element-2">link is switch-element-2</a>
+      <p class="switch-element-3"><a href="#switch-element-anchor-3">link inside "p" switch-element-3</a></p>
+    </div>
+    <div class="largebox switch-element-4"><a href="#switch-element-anchor-4">link inside a "div" with class .largebox and it's switch-element-4</a></div>
+
+    <pre class="output" id="switch-element-notifier-area">No switch elements triggered yet...</pre>
+
+  </div>
+
+<div id="outerlogger">
+  <h3>Log</h3>
+  <div id="logger"></div>
+</div>
+</body>
+<script src="../shared/jquery-1.8.2.min.js"></script>
+<script src="../shared/log4javascript.js"></script>
+<script src="../lib/switch_access.js"></script>
+<!-- <script src="./test.js"></script> -->
+<script type="text/javascript">
+  $(document).ready(function(){
+    window.switch_access = new SwitchAccess({
+      debug: true,
+      number_of_switches: 2,
+      delay_before_activating_element: 1000
+    });
+  // $("[class*="+window.switch_access.options.dom.element_class+"]").bind("switch-access-activate", function(event, param1, param2, param3) {
+  //   var text = "Activated: "+ param1.get(0).tagName.toLowerCase() + "\nIndex: " + param2 + "\nClasses: " + param1.attr("class");
+  //   text += "\n"
+  //   text += "Clicked:"+ param3.get(0).tagName.toLowerCase() + "\nClasses: " + param3.attr("class");
+  //   if (param3.is("a")) {
+  //     text += "\nhref:" + param3.attr("href");
+  //   }
+  //   $(".output").text(text);
+  // });
+  // $("[class*="+window.switch_access.options.dom.element_class+"]").bind("switch-access-move", function(event, param1, param2) {
+  //   $(".output").text("Moved to: "+ param1.get(0).tagName.toLowerCase() + "\nIndex: " + param2 + "\nClasses: " + param1.attr("class"));
+  // });
+
+  });
+</script>
+</html>
+

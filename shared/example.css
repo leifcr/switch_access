@@ -10,20 +10,19 @@ h1,h2,h3,h4,h5,h6 {
 }
 #outerlogger {
   border-radius: 20px;
-  border:1px solid #BBB;
-  background-color: #BBB;
+  border:1px solid #CCD;
+  background-color: #CCD;
   position:absolute;
   right:5px;
   top:5%;
   width:600px;
-  height:600px;
   height:90%;
   float:right;
   opacity: 0.8;
   padding:10px;
 }
 #outerlogger #logger{
-  height:570px;
+  height:92%;
 }
 
 #outerlogger h3 {
@@ -37,13 +36,42 @@ h1,h2,h3,h4,h5,h6 {
   height: 20px;
 }
 div.switch-objects-container {
-  clear:both;
-  height: 145px;
-  width: 600px;
+  clear:both !important;
+/*  height: 500px;
+  width: 600px;*/
+}
+
+.sw_holder {
+  clear:both !important;
+  float:none !important;
+  height: 200px;
+}
+.switch_element_group {
+  border:#ccc solid 1px !important;
+  width:590px !important;
+  height:150px !important;
+  clear:both !important;
+  float:none !important;
+}
+
+[class*="switch-element"] [class*="switch-element"] {
+  /*width:120px;*/
+  height:80px;  
+}
+
+[class*="switch-element"].current {
+  background-color: #ddd;
+  border-color: #656065;
+}
+
+[class*="switch-element"].activate {
+  background-color: #99f;
+  border-color: #99f;
 }
 
 [class*="switch-element"] {
   float:left;
+  /*position: relative;*/
   margin: 10px;
   border:#999 solid 5px;
   width: 100px;
@@ -51,8 +79,8 @@ div.switch-objects-container {
   color: #000;
   padding: 10px;
   border-radius: 20px;
+  /*clear:both;*/
 }
-
 #switch-element-5 {
   height: 50px;
   width: 250px;
@@ -86,12 +114,13 @@ div.switch-objects-container {
   background-color: #dda;
 }
 
-.switch-highlight-element {
+.highlighter.current {
   border: solid #1cc 5px;
   border-radius: 25px;
   z-index: -1;
 }
-.switch-highlight-element-activate {
+
+.highlighter.activate {
   border-color: red;
 }
 
@@ -110,6 +139,10 @@ pre.output {
   border:1px solid #555;
   background-color: #eee;
   border-radius: 10px;
+}
+
+.a {
+  border: 1px solid black;
 }
 
 /* TODO: improve coffescript to follow changes that affect position of the current element! (some sort of event binder/handler?)*/
