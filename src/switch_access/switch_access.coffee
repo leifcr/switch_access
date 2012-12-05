@@ -384,10 +384,10 @@ class SwitchAccess
         scrollval = element.offset().top - @options.visual.scroll_offset
 
     if (scroll_top != scrollval) && scrollval != null
-      if (@options.animate_scroll_time == 0)
+      if (@options.visual.animate_scroll_time == 0)
         $("html body").scrollTop(scrollval)
       else
-        $("html body").animate({scrollTop: scrollval}, @options.animate_scroll_time, @options.easing);
+        $("html body").animate({scrollTop: scrollval}, @options.visual.animate_scroll_time, @options.visual.easing);
 
 
   activateElement: ->
