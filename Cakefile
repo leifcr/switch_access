@@ -13,7 +13,7 @@ else if process.platform == 'darwin'
   opener = 'open'
 else
 
-library_name = "switch-access"
+library_name = "switch_access"
 
 
 build = (directories, output, extra_options) ->
@@ -47,7 +47,7 @@ build = (directories, output, extra_options) ->
 task 'watch', 'Watch library for changes', ->
   invoke 'watch:library'
 
-task 'watch:library', Watch only #{library_name} for changes", ->
+task 'watch:library', "Watch only #{library_name} for changes", ->
   build(["./src/#{library_name}", './src/vendor'], 'lib', ['--watch', '--join',"#{library_name}.js"])
 
 task 'watch:tests', 'Watch unit tests for changes', ->
