@@ -5,6 +5,7 @@
 ## Features
 
 - 1 or 2 switches
+- Switch groups and nested groups
 - Switches need to send normal "keys" (e.g. space/enter)
 - Lots of options to customize how the switch access works on a page.
 - Triggers the a click on the a html element or the first link inside the element (depending on options)
@@ -58,6 +59,8 @@ All methods assume that you initiated the controller similar to the above exampl
 ```
 
 ### Options
+This is a bit outdated... please see source and dev for usage...
+
 <dl>
   <dt>number_of_switches</dt>
   <dd>The number of switches 0 = disable, 1 = single switch, 2 = two switches <br/><em>Default: 0</em></dd>
@@ -137,20 +140,9 @@ There are two events dispatched that can be listened to:
 </dl>
 
 
-## Cookies
-
-Some settings can be read from cookies upon init. (You probably have some sort of user model where you store the data, so you can pass that to a cookie or use the initializer)
-
-The following settings are read from a cookie if available: number of switches, keys_1 and keys_2, and single_switch_move_time
-
-The settings in the cookie will override what you have in the initializer, in case the user customized his/her settings.
-
 ## Requirements
 
 jQuery (1.8 or newer)
-
-##### For reading some settings from cookies:
-jQuery-cookie (https://github.com/carhartl/jquery-cookie) (only if you intend to use settings from a cookie)
 
 ##### For development:
 log4javascript (http://log4javascript.org) only if debug is set to true
@@ -166,6 +158,5 @@ Internet Explorer 9+
 
 ## License
 
-This work is under the FreeBSD License.
+This work is under either a GPL License or a Commercial license. For commercial usage, please contact (leifcr@gmail.com)
 
-As this is *free* for use in other products, please consider sending me a gadget if you charge your customers.
