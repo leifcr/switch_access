@@ -237,7 +237,7 @@ class SwitchAccess
     # return
     @runtime.active = true
     @moveToFirstRootElement()
-    @startSingleSwitchTimer() if (@options.switches.number_of_switches == 1)
+    @startSingleSwitchTimer()
     @runtime.action_triggered = false
 
   stop: ->
@@ -393,6 +393,7 @@ class SwitchAccess
   activateElement: ->
     @log "activateElement"
     @runtime.action_triggered = true
+    @stopSingleSwitchTimer()
 
     @log "Activate Element: idx: #{@runtime.element.idx} level: IDX: #{@runtime.element.level} uuid: #{@runtime.element.current.uniqueDataAttr()}"
     if (@options.switches.delay_before_activating_element == 0)
@@ -413,11 +414,12 @@ class SwitchAccess
 
     # see if the element has children, if so go into level
     if @runtime.element.current.children().length > 0
+      @startSingleSwitchTimer()
       return @moveToNextLevel()
     # else the element should "activate"
 
     if ((@runtime.element.current.jq_element().is("a")) || (@activate_first_link == false))
-      element_to_click = @runtime.element.current.jq_element
+      element_to_click = @runtime.element.current.jq_element()
     else
       # if element isn't a link, find first link within element and go to the url/trigger it
       element_to_click = @runtime.element.current.jq_element().find("a")
@@ -430,7 +432,6 @@ class SwitchAccess
       # if (ret == true) && element_to_click.is("a")
       #   document.location = element_to_click.attr("href")
       if (@options.switches.number_of_switches == 1)
-        @stopSingleSwitchTimer()
         @runtime.next_element_idx = -1 if (@options.single_switch_restart_on_activate)
         @runtime.next_level       = 0
         @startSingleSwitchTimer()
@@ -502,10 +503,12 @@ class SwitchAccess
       return true
 
   startSingleSwitchTimer: ->
+    return unless @options.switches.number_of_switches == 1
     @log "startSingleSwitchTimer"
-    @runtime.single_switch_timer_id = window.setInterval(( -> @singleSwitchTimerCallback), @options.single_switch_move_time)
+    @runtime.single_switch_timer_id = window.setInterval(( => @singleSwitchTimerCallback();return), @options.switches.single_switch_move_time)
 
   stopSingleSwitchTimer: ->
+    return unless @options.switches.number_of_switches == 1
     @log "stopSingleSwitchTimer"
     window.clearInterval(@runtime.single_switch_timer_id)
 
