@@ -141,6 +141,14 @@ pre.output {
   border-radius: 10px;
 }
 
+.right_side_output {
+  position:fixed;
+  top:100px;
+  right:20px;
+  width:500px;
+  height: 150px;
+}
+
 .a {
   border: 1px solid black;
 }
