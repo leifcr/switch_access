@@ -6,9 +6,8 @@
 
 - 1 or 2 switches
 - Switches need to send normal "keys" (e.g. space/enter)
-- Various options for setting up the controller.
-- Triggers the first link inside the element that is highlighted, unless the element itself is a link
-- Will restart if any options are set while it's running.
+- Lots of options to customize how the switch access works on a page.
+- Triggers the a click on the a html element or the first link inside the element (depending on options)
 
 ## Usage
 
@@ -50,13 +49,13 @@ All methods assume that you initiated the controller similar to the above exampl
   window.switch_access.deinit()
   delete window.switch_access
 
+  // set options. Note: The switch access will stop, so you need to call start after setting options.
   window.switch_access.setoptions({
     number_of_switches: 1,
     single_switch_move_time: 2500 // 2,5 seconds (time is in milliseconds)
     })
 
 ```
-
 
 ### Options
 <dl>
@@ -148,7 +147,7 @@ The settings in the cookie will override what you have in the initializer, in ca
 
 ## Requirements
 
-jQuery (1.7 or newer)
+jQuery (1.8 or newer)
 
 ##### For reading some settings from cookies:
 jQuery-cookie (https://github.com/carhartl/jquery-cookie) (only if you intend to use settings from a cookie)

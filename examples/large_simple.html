@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>Switch access for webpages using coffeescript (Large example)</title>
+  <link rel="stylesheet" type="text/css" href="demo.css">
+</head>
+<body>
+  <div class="container">
+    <h1>switch_access Example</h1>
+    <p>This is to show the scrolling functionality of the script. Any objects that aren't visible on the page will make to page scroll so the element is visible.</p>
+    <p><a href="index.html">Back to original demo page.</a>
+    <p>Use "Space" and "Enter" to move around and trigger actions. <!-- Or change the settings below.  -->
+    <pre class="output largedemo" id="switch-element-notifier-area">No switch elements triggered yet...</pre>
+    <div class="switch-objects-container">
+      <div class="switch-element-1">
+        <a href="#switch-element-anchor-1">switch-element-1</a>
+      </div>
+      <a href="#switch-element-anchor-2" class="switch-element-2">switch-element-2</a>
+      <p class="switch-element-3"><a href="#switch-element-anchor-3">switch-element-3</a></p>
+    </div>
+    <div class="largebox switch-element-4"><a href="#switch-element-anchor-4">switch-element-4</a></div>
+
+    <div class="largebox switch-element-5" id="switch-element-5"><a href="#switch-element-anchor-5">switch-element-5</a></div>
+    <div class="largebox switch-element-6"><a href="#switch-element-anchor-6">switch-element-6</a></div>
+    <div class="largebox switch-element-7"><a href="#switch-element-anchor-7">switch-element-7</a></div>
+    
+    <div class="switch-objects-container">
+      <a href="#switch-element-anchor-8" class="switch-element-8">switch-element-8</a>
+      <a href="#switch-element-anchor-9" class="switch-element-9">switch-element-9</a>
+      <a href="#switch-element-anchor-10" class="switch-element-10">switch-element-10</a>
+    </div>
+    
+    <div class="switch-objects-container">
+      <a href="#switch-element-anchor-11" class="switch-element-11">switch-element-11</a>
+      <a href="#switch-element-anchor-12" class="switch-element-12">switch-element-12</a>
+    </div>
+
+  </div>
+
+<div id="outerlogger">
+  <h3>Log</h3>
+  <div id="logger"></div>
+</div>
+
+</body>
+<script src="jquery-1.8.2.js"></script>
+<script src="jquery-cookie.js"></script>
+<script src="jquery.easing.1.3.js"></script>
+<script src="resize.js"></script>
+<script src="log4javascript.js"></script>
+<script src="switch_access.js"></script>
+<!-- <script src="./test.js"></script> -->
+<script type="text/javascript">
+  $(document).ready(function(){
+    window.switch_access = new SwitchAccess({
+      debug: true,
+      number_of_switches: 2,
+      easing: "easeOutCubic",
+      animate_scroll_time: 350
+      // delay_before_activating_element: 1000
+    });
+  $("[class*="+window.switch_access.options.element_class+"]").bind("switch-access-activate", function(event, param1, param2, param3) {
+    var text = "Activated: "+ param1.get(0).tagName.toLowerCase() + "\nIndex: " + param2 + "\nClasses: " + param1.attr("class");
+    text += "\n"
+    text += "Clicked:"+ param3.get(0).tagName.toLowerCase() + "\nClasses: " + param3.attr("class");
+    if (param3.is("a")) {
+      text += "\nhref:" + param3.attr("href");
+    }
+    $(".output").text(text);
+  });
+  $("[class*="+window.switch_access.options.element_class+"]").bind("switch-access-move", function(event, param1, param2) {
+    $(".output").text("Moved to: "+ param1.get(0).tagName.toLowerCase() + "\nIndex: " + param2 + "\nClasses: " + param1.attr("class"));
+  });
+  });
+</script>
+</html>
+
