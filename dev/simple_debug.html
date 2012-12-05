@@ -33,8 +33,10 @@
   $(document).ready(function(){
     window.switch_access = new SwitchAccess({
       debug: true,
-      number_of_switches: 2,
-      delay_before_activating_element: 1000
+      switches: { 
+        number_of_switches: 1,
+        // delay_before_activating_element: 1000
+      }
     });
   // $("[class*="+window.switch_access.options.dom.element_class+"]").bind("switch-access-activate", function(event, param1, param2, param3) {
   //   var text = "Activated: "+ param1.get(0).tagName.toLowerCase() + "\nIndex: " + param2 + "\nClasses: " + param1.attr("class");
