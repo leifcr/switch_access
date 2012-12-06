@@ -51,7 +51,7 @@ task 'watch:library', "Watch only #{library_name} for changes", ->
   build(["./src/#{library_name}", './src/vendor'], 'lib', ['--watch', '--join',"#{library_name}.js"])
 
 task 'watch:tests', 'Watch unit tests for changes', ->
-  build('src/unit', 'lib/unit', '--watch')
+  build('src/unit', 'lib/unit', ['--watch', '--join',"#{library_name}_test.js"])
 
 task 'watch:examples', 'Watch unit examples for changes', ->
   build('src/examples', 'lib/examples', '--watch')
