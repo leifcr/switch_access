@@ -3,7 +3,7 @@ Switch Access for webpages
 (c) 2012 Leif Ringstad
 Dual-licensed under GPL or commercial license (LICENSE and LICENSE.GPL)
 Source: http://github.com/leifcr/switch_access
-v 1.1.0
+v 1.1.1
 ###
 
 SwitchAccessCommon =
@@ -59,7 +59,7 @@ SwitchAccessCommon =
 class SwitchAccess
   constructor: (options) ->
     # return existing instance if already initialized, as there should only be one instance of Switch Access on a page
-    if (window['__switch_access_sci'] != undefined)
+    if typeof (window['__switch_access_sci']) != "undefined" && window['__switch_access_sci'] != null
       window.__switch_access_sci.setoptions(options)
       return window.__switch_access_sci
 
@@ -74,7 +74,8 @@ class SwitchAccess
       switches:
         number_of_switches:                  0
         keys_1:                              [32, 13] # Space / Enter
-        keys_2:                              [[32], [13]] # Space / Enter
+        keys_2:                              [[9, 32], [13]] # Space / Enter
+        #keys_3:                             # forward/backward and select
         single_switch_move_time:             1500
         single_switch_restart_on_activate:   true
         delay_before_activating_element:     0
@@ -138,13 +139,16 @@ class SwitchAccess
   
   init: ->
     if (@options.debug)
+      appender = null
       @logger = log4javascript.getLogger()
-      appender = new log4javascript.InPageAppender("logger")
-      appender.setWidth("100%")
-      appender.setHeight("100%")
-      @logger.setLevel(log4javascript.Level.ALL)
-      appender.setThreshold(log4javascript.Level.ALL)
-      @logger.addAppender(appender)
+      if $('#logger').length > 0
+        if $('#logger').find('iframe').length <= 0
+          appender = new log4javascript.InPageAppender("logger")
+          appender.setWidth("100%")
+          appender.setHeight("100%")
+          appender.setThreshold(log4javascript.Level.ALL)
+          @logger.setLevel(log4javascript.Level.ALL)
+          @logger.addAppender(appender)
 
     @log("init")
     @createHighlighterHolder() if SwitchAccessCommon.options.highlighter.use
@@ -244,10 +248,38 @@ class SwitchAccess
     return if (@runtime.active == false)
     @log "stop"
     @runtime.active = false
-    # hide highlight div
-    # @removeHighlightFromElement(@runtime.element.current)
-    # @hideHighlightdiv()
-    # @stopSingleSwitchTimer()
+    @removeHighlight()
+    @removeActivateClass()
+    @stopSingleSwitchTimer()
+
+  destroy: ->
+    @log "destroy"
+    @stop()
+    @removeCallbacks()
+    @destroy_elements(@runtime.element_list)
+    @removeHighlighterHolder()
+    @runtime.element_list       = null
+    @runtime.current_list       = null
+    @runtime.parent_list        = null
+    @runtime.element.current    = null
+    @runtime.highlighter_holder = null
+    window.__switch_access_sci  = null
+
+  destroy_elements: (list) ->
+    @log "destroy_elements", "trace"
+    i = 0
+    while i < list.length
+      if (list[i].length > 1)
+        @destroy_elements(list[i]) 
+      else
+        @destroy_element(list[i])
+      i++
+    return
+
+  destroy_element: (element) ->
+    @log "destroy_element #{element.uniqueDataAttr()}", "trace"
+    element.destroy()
+    return
 
   moveToFirstRootElement: ->
     @runtime.element.idx = -1
@@ -492,7 +524,7 @@ class SwitchAccess
       @runtime.action_triggered = false
       @runtime.keypress_allowed = false
       timeout = @options.switches.delay_for_allowed_keypress
-      if (action == 2)
+      if (action == SwitchAccessCommon.actions.triggered_action) || (action == SwitchAccessCommon.actions.triggered_delayed_action)
         if (@options.switches.number_of_switches == 1)
           if (@options.switches.single_switch_move_time > @options.switches.delay_before_activating_element)
             timeout = @options.switches.single_switch_move_time
@@ -502,7 +534,11 @@ class SwitchAccess
           if (@options.switches.delay_before_activating_element > timeout)
             timeout = @options.switches.delay_before_activating_element
 
-      window.setTimeout((=>@allowKeyPressCallback();return), timeout)
+      if timeout == 0
+        @allowKeyPressCallback()
+      else
+        window.setTimeout((=>@allowKeyPressCallback();return), timeout)
+
       event.stopPropagation();
       return false
     else
@@ -510,18 +546,23 @@ class SwitchAccess
 
   startSingleSwitchTimer: ->
     return unless @options.switches.number_of_switches == 1
-    @log "startSingleSwitchTimer"
+    @log "startSingleSwitchTimer", "trace"
     @runtime.single_switch_timer_id = window.setInterval(( => @singleSwitchTimerCallback();return), @options.switches.single_switch_move_time)
 
   stopSingleSwitchTimer: ->
     return unless @options.switches.number_of_switches == 1
-    @log "stopSingleSwitchTimer"
+    @log "stopSingleSwitchTimer", "trace"
     window.clearInterval(@runtime.single_switch_timer_id)
 
+  removeCallbacks: ->
+    @log "removeCallbacks", "trace"
+    $(document).off("keypress.switch_access");
+
   registerCallbacks: ->
-    @log "registerCallbacks"
+    @log "registerCallbacks", "trace"
     # $(document).on("keypress", @callbackForKeyPress)
-    $(document).on("keypress", (event) => 
+    # $(document).on("keydown", (event) => 
+    $(document).on("keypress.switch_access", (event) => 
       @callbackForKeyPress(event)
       false
       
@@ -552,6 +593,14 @@ class SwitchAccessElement
     @options.debug = SwitchAccessCommon.options.debug
     @uniqueDataAttr(true)
     @createHighlighter(highlight_holder)
+    @log "init", "trace"
+
+  destroy: ->
+    @log "destroy", "trace"
+    @destroyHighlighter()
+    parent = null
+    children = null
+    jq_element = null
 
   parent: (parent = null) ->
     if parent == null
@@ -683,7 +732,7 @@ class SwitchAccessElement
   ###
   destroyHighlighter: ->
     return if @runtime.jq_highlighter == null
-    @log "destroyHighlight"
+    @log "destroyHighlight", "trace"
 
     @runtime.jq_highlighter.remove()
     @runtime.jq_highlighter = null
@@ -693,7 +742,7 @@ class SwitchAccessElement
   ###
   enableCSSWatch: ->
     return unless SwitchAccessCommon.options.highlighter.use == true && SwitchAccessCommon.options.highlighter.watch_for_resize 
-    @log "enableCSSWatch"
+    @log "enableCSSWatch", "trace"
     @runtime.watching = true
     if @runtime.csswatch_init
       @runtime.jq_element.csswatch('start')
@@ -726,7 +775,7 @@ class SwitchAccessElement
   Will also add the same attribute as a class if option set_unique_element_class is enabled.
   ###
   uniqueDataAttr: (create = false) ->
-    @log "uniqueDataAttr: Create: #{create}"
+    @log "uniqueDataAttr: Create: #{create}", "trace"
     if create
       @runtime.uuid = SwitchAccessCommon.generateRandomUUID()
       @runtime.jq_element.data(SwitchAccessCommon.options.internal.unique_element_data_attribute, @runtime.uuid)
@@ -740,7 +789,7 @@ class SwitchAccessElement
   Callback for resize event on this particular element
   ###
   callbackForResize: (event, changes) ->
-    @log "callbackForResize"
+    @log "callbackForResize", "trace"
     return unless SwitchAccessCommon.options.highlighter.use
     @setHighlighterSize(@runtime.jq_element, @runtime.jq_highlighter)
     @setHighlighterPosition(@runtime.jq_element, @runtime.jq_highlighter)
