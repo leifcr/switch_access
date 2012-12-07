@@ -14,37 +14,112 @@ SwitchAccessCommon =
       v.toString 16
   options:
     ###
-    Element highlighting
+    Element highlighting using the built in Highlighter object feature
     ###
     highlighter:
+      ###
+      Use highlighter div element for each element.
+      A div is positioned absolute around the element and shown/hidden accordingly
+      Default: true
+      ###
       use:                      true
+      
+      ###
+      Additional content for the highlighter
+      Note: The content is placed within every highlighter and multiple highlighters can be visible at the same time.
+            It is best to not use ID's on elements placed inside the highlighter
+      Default: ""
+      ###
       content:                  ""
+      
+      ###
+      Class for the highlighter
+      Default: "highlighter"
+      ###
       class:                    "highlighter"
+
+      ###
+      The class when a highlighter is active/currently selected
+      Default: "current"
+      ###
       current_class:            "current"
+
+      ###
+      The class when set on a highlighter when activated action is triggered 
+      Note: only usable if options.visual.delay_before_activating_element is > 0
+      Default: "activate"
+      ###
       activate_class:           "activate"
+      
+      ###
+      Margin between the highlighter and the element
+      Default: 5
+      ###
       margin_to_element:        5
+
+      ###
+      Selector to set size on. (Change in case you have content inside the highlighter you wish to highlight)
+      ###
       selector_for_set_to_size: ".highlighter"
-      watch_for_resize:         true
-      use_size_position_check:  true
+      
+      ###
+      Use CSS watch to watch the element for changes in position and dimensions
+      This is only needed if you have javascript or other DOM elements 
+      that might change the position or size of a switch-enabled element
+      Default: false
+      ###
+      watch_for_resize:         false
+      # use_size_position_check:  true
+      
+      ###
+      The ID for the holder for all highlighters. Unlikely to need changing
+      Default: "sw-highlighter-holder"
+      ###
       holder_id:               "sw-highlighter-holder"
 
+    ###
+    Options specific to highlighting
+    ###
     highlight:
+      ###
+      Options specifict to highlighting a switch-element
+      ###
       element:
-        current_class:          "current"
-        activate_class:         "activate"
+        ###
+        The class when a element is active/currently selected
+        Default: "current"
+        ###
+        current_class:         "current"
 
-      activate_time:            1000
+        ###
+        The class when set on a switch-element when activated action is triggered 
+        Note: only usable if options.visual.delay_before_activating_element is > 0
+        Default: "activate"
+        ###
+        activate_class:        "activate"
 
     debug: false
 
     ###
     Internal options, but can be changed if needed
     ###
-    internal:                
+    internal:
+      ###
+      The data attribute for the unique ID on each element and switch highlighter
+      Default: "sw-elem"
+      ###
       unique_element_data_attribute: "sw-elem"
+      
+      ###
+      Set a unique class on each element
+      Default: false
+      ###
       set_unique_element_class:      false
 
-  # Actions (Enumish)
+  ###
+  Actions (Enumish)
+  These should not be overridden, as they are used internally
+  ###
   actions:
     none:                     0
     moved_to_next_element:    1
@@ -69,52 +144,137 @@ class SwitchAccess
     ###
     @options = 
       ###
-        Switch/Key settings 
+      Switch/Key settings 
       ###
       switches:
+
+        ### 
+        The number of switches 0 = disable, 1 = single switch, 2 = two switches 
+        Default: 2
+        ###
         number_of_switches:                  0
+
+        ###
+        Array for the keycodes to use as single switch (Multiple keycodes possible)
+        Default: [32, 13]  (32 = 'Space', 13 = 'Enter')        
+        ###
         keys_1:                              [32, 13] # Space / Enter
-        keys_2:                              [[9, 32], [13]] # Space / Enter
+
+        ###
+        Array of two arrays for the keys to use as two switches
+        Default: [[32, 9], [13]] (9 = 'Tab, 32 = 'Space', 13 = 'Enter')        
+        ###
+        keys_2:                              [[9, 32], [13]] # Tab + Space / Enter
+        
         #keys_3:                             # forward/backward and select
+        
+        ###
+        Time for single switch scanning to move from element to element 
+        Default: 1500 milliseconds
+        ###
         single_switch_move_time:             1500
+        
+        ###
+        If the single switch movement should restart/go to index 0 when restarted
+        Default: true
+        ###
         single_switch_restart_on_activate:   true
+
+        ###
+        Time after "triggering" a element to it's activated 
+        Default: 0
+        ###
         delay_before_activating_element:     0
+
+        ###
+        Delay before an keypress is "allowed" after last keypress.
+        Default: 250 ms
+        ###
         delay_for_allowed_keypress:          250;
+
+        ###
+        Groups enabled/disabled (If elements should be grouped or run as single elements)
+        Default: true
+        ###
         groups:                              true;
 
       ###
-      classes for elements/groups
+      DOM options
       ###
       dom:
+        ###
+        The class which all elements must have to be a switch controlled element
+        The class should be appended with numbers 1,2,3 etc to set order of elements. order is unpredicaable if several
+        elements have the same number within a group.
+        Default: "switch-element-"
+        ###
         element_class:            "switch-element-" # Use classnames such as switch-element-1 switch-element-2 or change this value
-        # sort_elements_after_numbers:  true              # By setting this to false, you can use the classname above without numbers, but the switch-order cannot be specified
-        start_element:            "body"
+        ###
+        The jQuery selector from where the first switch element should be searched for.
+        Usually this should be body or the first container on the webpage
+        Note: Use a selector which selects a single object. Else behaviour is unpredictable
+        ###
+        start_element_selector:   "body"
 
       ###
       Other settings
       ###
       # Use .search where you have class="search" or #search for id="search" (jQuery selectors)
       key_filter_skip:        [".search"]
+      
+      ###
+      If set to true, the first link within the element is "clicked".
+      Else the actual element is clicked.
+      FUTURE feature: (on the todo list) 
+      A data attribute can be set on the element in order to override this on a per-element basis
+      ###
       activate_first_link:    true # activate element or first link within
+      ###
+      Enable/Disable debug
+      Note: log4javascript must be available if used
+      Default: false
+      ###
       debug:                  false
 
       ###
-      Visual
+      Visual settings
       ###
       visual:
-        hide_show_delay:        500
-        move_fade_delay:        200
-        pulsate:                false
+        ###
+        Scroll to ensure the entire element in focus is visible (if possible)
+        Default: true
+        ###
         ensure_visible_element: true # ensure element is visible on the page
+
+        ###
+        The number of pixels for margin to the viewport/window when the element is positioned in the viewport/window
+        Default: 15
+        ###
         scroll_offset:          15 # offset from top/bottom in pixels for the element
+
+        ###
+        Time in milliseconds the scroll will last (set to 0 if instant scroll is preferred)
+        Default: 200
+        ###
         animate_scroll_time:    200 # time to use for animating scroll
+        ###
+        The easing to use for animation
+        Default: "linear"
+        ###
         easing:                 "linear" # easing to use for scrolling
+
+        # hide_show_delay:        500
+        # move_fade_delay:        200
+        # pulsate:                false
+        # play_sound:             false
+        # highlight_sound:        "./switch_move.mp3"
+        # activate_sound:         "./switch_activate.mp3"
 
     ###
     Runtime properties
     ###
     @runtime = 
-      active:             false
+      active:             false # switchaccess is active or not
       element_list:       null # an array hashes with element + children
       current_list:       null # the current list (Root or a elements list of children)
       parent_list:        null # the list the parent is in when moving into a child
@@ -126,13 +286,12 @@ class SwitchAccess
         next_level:       0     # next level when moving to elements.
         next_idx:         0     # next elements idx
         parent_idx:       0     # the last idx on the parent before moving into the children of an element
-      action_triggered:   false
-      keypress_allowed:   true
-      element_to_click:   null
+      action_triggered:   false # set to true if an action is triggered
+      keypress_allowed:   true  # keypress allowed or not
       timers:
-        single_switch_id: null
+        single_switch_id: null  # The id of the single switch timer
 
-      highlighter_holder: null
+      highlighter_holder: null  # The highlighter holder as a jquery object
     
     @setoptions(options);
     @init();
@@ -225,7 +384,7 @@ class SwitchAccess
     list
 
   buildElementList: ->
-    @runtime.element_list = @buildListFromjqElement($(@options.dom.start_element), null, 0)
+    @runtime.element_list = @buildListFromjqElement($(@options.dom.start_element_selector), null, 0)
     @log "buildElementList: count:#{@runtime.element_list.length}, class-name: #{@options.dom.element_class}"
     return
 
@@ -359,12 +518,7 @@ class SwitchAccess
     else
       list_n = @runtime.current_list
 
-    # if the element has children, it's most likely that the children should be highlighted
-    if list_n[@runtime.element.next_idx].children().length > 0
-      child.highlight() for child in list_n[@runtime.element.next_idx].children()
-    else
-      # if the next element doesn't have any children, highlight it
-      list_n[@runtime.element.next_idx].highlight()
+    list_n[@runtime.element.next_idx].highlight()
 
     @runtime.element.idx     = @runtime.element.next_idx
     @runtime.element.level   = @runtime.element.next_level
@@ -376,12 +530,8 @@ class SwitchAccess
 
   removeHighlight: ->
     @log "removeHighlight"
-    return if @runtime.current_list is null
-    if @runtime.element.current.children().length == 0
-      @runtime.element.current.removeHighlight()
-    else
-    # else it's most likely that the children should be highlighted
-      child.removeHighlight() for child in @runtime.element.current.children()
+    return if @runtime.element.current is null
+    @runtime.element.current.removeHighlight()
     return
 
   removeActivateClass: ->
@@ -436,7 +586,6 @@ class SwitchAccess
     @log "Activate Element: idx: #{@runtime.element.idx} level: IDX: #{@runtime.element.level} uuid: #{@runtime.element.current.uniqueDataAttr()}"
     if (@options.switches.delay_before_activating_element == 0)
       return @activateElementCallBack()
-      # window.setTimeout(( -> @removeHighlightCallback;return), @options.highlight_on_activate_time)
     else
       @runtime.element.current.jq_element().addClass(@options.element_activate_class)
       if @runtime.element.current.children().length > 0
@@ -473,7 +622,6 @@ class SwitchAccess
         @runtime.next_element_idx = -1 if (@options.single_switch_restart_on_activate)
         @runtime.next_level       = 0
         @startSingleSwitchTimer()
-      # window.setTimeout(( -> @removeHighlightCallback; return), @options.highlight_on_activate_time)
     else
       msg = "Nothing to do. Verify your settings and"
       @log msg, "warn"
@@ -556,18 +704,16 @@ class SwitchAccess
 
   removeCallbacks: ->
     @log "removeCallbacks", "trace"
-    $(document).off("keypress.switch_access");
+    $(document).off("keydown.switch_access");
 
   registerCallbacks: ->
     @log "registerCallbacks", "trace"
     # $(document).on("keypress", @callbackForKeyPress)
     # $(document).on("keydown", (event) => 
-    $(document).on("keypress.switch_access", (event) => 
+    $(document).on("keydown.switch_access", (event) => 
       @callbackForKeyPress(event)
-      false
-      
     ) 
-    true
+    return
 
 window.SwitchAccess = SwitchAccess
 
@@ -577,17 +723,20 @@ class SwitchAccessElement
       debug: false
 
     @runtime = 
-      highligthed:      false
-      jq_highlighter:   null
-      jq_element:       jq_element
-      uuid:             null
-      watching:         false
-      csswatch_init:    false
-      parent:           parent
-      children:         children
+      jq_highlighter:   null         # jquery object of the highlighter belonging to this element
+      jq_element:       jq_element   # jquery object of this element
+      uuid:             null         # The UUID for this element
+      watching:         false        # if csswatch is enabled for this element
+      csswatch_init:    false        # if csswatch has been initialized on/for this element
+      parent:           parent       # the parent switch-element of this element
+      children:         children     # the child switch-elements of this element
+      highlight_holder: null         # the highlight holder from SwitchAccess
+
     @logger = logger
 
-    if highlight_holder == null then @init($('body')) else @init(highlight_holder)
+    @runtime.highlight_holder = if highlight_holder == null then $('body') else highlight_holder
+    
+    @init(@runtime.highlight_holder)
   
   init: (highlight_holder)->
     @options.debug = SwitchAccessCommon.options.debug
@@ -638,8 +787,14 @@ class SwitchAccessElement
   ###
   Show the highlighter and add highlight class to current object
   ###
-  highlight: ->
+  highlight: (check_children = true) ->
     @log "highlight"
+    # if the element has children, it's most likely that the children should be highlighted
+    if @children().length > 0 and check_children == true
+      child.highlight(false) for child in @children()
+      return
+
+    # if the next element doesn't have any children, highlight it
     @runtime.jq_element.addClass(SwitchAccessCommon.options.highlight.element.current_class)
     return unless SwitchAccessCommon.options.highlighter.use
     @runtime.jq_highlighter.addClass(SwitchAccessCommon.options.highlighter.current_class)
@@ -653,8 +808,14 @@ class SwitchAccessElement
   ###
   Hide highlighter and remove highlight class on the current object(s)
   ###
-  removeHighlight: ->
+  removeHighlight: (check_children = true) ->
     @log "removeHighlight"
+
+    # if set to check for children:
+    if @children().length > 0 and check_children == true
+      child.removeHighlight(false) for child in @children()
+      return
+      
     @runtime.jq_element.removeClass(SwitchAccessCommon.options.highlight.element.current_class)
     @runtime.jq_element.removeClass(SwitchAccessCommon.options.highlight.element.activate_class)
     return unless SwitchAccessCommon.options.highlighter.use
@@ -794,6 +955,18 @@ class SwitchAccessElement
     @setHighlighterSize(@runtime.jq_element, @runtime.jq_highlighter)
     @setHighlighterPosition(@runtime.jq_element, @runtime.jq_highlighter)
     # if (changes.keys)
+
+  ###
+  Play the sound for the current element upon highlight
+  ###
+  # playHighlightSound: ->
+
+
+  ###
+  Play the sound for the current element upon activation
+  ###
+  # playActivateSound: ->
+
 
 # TODO: Fix instance object timeout:
 # setTimeout(function(thisObj) { thisObj.methodToCall(); }, time, this)
