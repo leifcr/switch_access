@@ -54,7 +54,6 @@ QUnit.test 'It should move through the three child elements in the first group',
 
 
 QUnit.test 'It should move back to the group and highlight the three children', 4, ->
-  # trigger keypress "space" twice
   Helper.trigger_key_event(13)
   equal $('.switch-element-1.test-group').find(".switch-element-1").hasClass('current'), true
   equal $('.switch-element-1.test-group').find(".switch-element-2").hasClass('current'), false
@@ -65,12 +64,13 @@ QUnit.test 'It should move back to the group and highlight the three children', 
   equal $('.switch-element-1.test-group').find("[class*=switch-element-]").hasClass('current'), true
   return
 
-QUnit.test 'It should activate the link on the third element in the second group', 1, ->
-  # trigger keypress "space" twice
-  Helper.trigger_key_event(32)
-  Helper.trigger_key_event(13)
-  Helper.trigger_key_event(32)
-  Helper.trigger_key_event(32)
-  Helper.trigger_key_event(13)
-  equal /#group-2-switch-element-3/.test(document.URL), true
-  return
+# Cannot test links in firefox/mozilla, but if callbacks work, links work
+if typeof(jQuery.browser.mozilla) == "undefined"
+  QUnit.test 'It should activate the link on the third element in the second group', 1, ->
+    Helper.trigger_key_event(32)
+    Helper.trigger_key_event(13)
+    Helper.trigger_key_event(32)
+    Helper.trigger_key_event(32)
+    Helper.trigger_key_event(13)
+    equal /#group-2-switch-element-3/.test(document.URL), true, "The url should contain #group-2-switch-element-3"
+    return

@@ -41,31 +41,32 @@ QUnit.test 'It should move back to the first element', 1, ->
     start())
     , 225)
   return
+# Cannot test links in firefox/mozilla, but if callbacks work, links work
+if typeof(jQuery.browser.mozilla) == "undefined"
+  QUnit.test 'It should activate the first link in the first group', 2, ->
+    equal $('.switch-element-1').hasClass('current'), true
+    Helper.trigger_key_event(13)
+    Helper.trigger_key_event(13)
+    equal /#group-1-switch-element-1/.test(document.URL), true
+    return
 
-QUnit.test 'It should activate the first link in the first group', 2, ->
-  equal $('.switch-element-1').hasClass('current'), true
-  Helper.trigger_key_event(13)
-  Helper.trigger_key_event(13)
-  equal /#group-1-switch-element-1/.test(document.URL), true
-  return
-
-QUnit.test 'It should activate the link on the third element in the second group', 5, ->
-  # trigger keypress "space" twice
-  stop()
-  setTimeout(( -> 
-    equal $('.switch-element-2.test-group').find("[class*=switch-element-]").hasClass('current'), true, "Group 1 child should all have current class"
-    Helper.trigger_key_event(32)
-    setTimeout(( ->
-      equal $('.switch-element-2.test-group').find(".switch-element-1").hasClass('current'), false, "switch-element-1 should NOT be current"
-      equal $('.switch-element-2.test-group').find(".switch-element-2").hasClass('current'), false, "switch-element-2 should NOT be current"
-      equal $('.switch-element-2.test-group').find(".switch-element-3").hasClass('current'), true, "switch-element-3 should be current"
+  QUnit.test 'It should activate the link on the third element in the second group', 5, ->
+    # trigger keypress "space" twice
+    stop()
+    setTimeout(( -> 
+      equal $('.switch-element-2.test-group').find("[class*=switch-element-]").hasClass('current'), true, "Group 1 child should all have current class"
       Helper.trigger_key_event(32)
-      console.log(document.URL)
-      equal /#group-2-switch-element-3/.test(document.URL), true
-      start())
-      , 225)
-    )
-    , 125)  
+      setTimeout(( ->
+        equal $('.switch-element-2.test-group').find(".switch-element-1").hasClass('current'), false, "switch-element-1 should NOT be current"
+        equal $('.switch-element-2.test-group').find(".switch-element-2").hasClass('current'), false, "switch-element-2 should NOT be current"
+        equal $('.switch-element-2.test-group').find(".switch-element-3").hasClass('current'), true, "switch-element-3 should be current"
+        Helper.trigger_key_event(32)
+        console.log(document.URL)
+        equal /#group-2-switch-element-3/.test(document.URL), true
+        start())
+        , 225)
+      )
+      , 125)  
 
 
-  return
+    return

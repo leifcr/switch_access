@@ -36,6 +36,6 @@ if typeof(window.Helper) == "undefined"
 
     trigger_key_event: (key_code) -> 
       # trigger event
-      event = $.Event( "keypress" );
+      event = $.Event( "keydown" );
       event.which = key_code;
       $( document ).trigger( event );

@@ -58,8 +58,13 @@
       debug: true,
       switches: { 
         number_of_switches: 2,
-        delay_before_activating_element: 1000
-      }
+        delay_before_activating_element: 0, 
+        groups: false,
+        delay_for_allowed_keypress: 0,
+      },
+      visual: {
+        ensure_visible_element: false
+      }      
     });
   $("[class*="+window.switch_access.options.dom.element_class+"]").on("switch-access-activate", function(event, param1, param2, param3, param4) {
     var text = "Activated: idx: "+ param1 + " level: " + param2;
