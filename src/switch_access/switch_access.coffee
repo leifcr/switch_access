@@ -383,8 +383,31 @@ class SwitchAccess
       num_a - num_b
     list
 
+  elementWithoutChildren: (element) ->
+    @log "elementWithoutChildren #{element.uniqueDataAttr()}"
+    ret = []
+    if element.children().length == 0
+      ret.push(element)
+    else
+      ret = ret.concat(@elementWithoutChildren(child)) for child in element.children()
+      element.children([]) # remove children from the element
+      element.destroy() # destroy the element, as the children have been returned
+    ret
+
+
+  flattenElementList: ->
+    @log "flattenElementList"
+    new_list = []
+    new_list = new_list.concat(@elementWithoutChildren(element)) for element in @runtime.element_list
+    new_list
+
   buildElementList: ->
     @runtime.element_list = @buildListFromjqElement($(@options.dom.start_element_selector), null, 0)
+
+    # if groups are disabled, flatten the list by moving children upwards
+    if @options.switches.groups == false
+      @runtime.element_list = @flattenElementList()
+
     @log "buildElementList: count:#{@runtime.element_list.length}, class-name: #{@options.dom.element_class}"
     return
 
@@ -424,20 +447,13 @@ class SwitchAccess
     @runtime.highlighter_holder = null
     window.__switch_access_sci  = null
 
+  ###
+  Destroy elements in a list
+  Children of the element will be destroyed by the element itself
+  ###
   destroy_elements: (list) ->
     @log "destroy_elements", "trace"
-    i = 0
-    while i < list.length
-      if (list[i].length > 1)
-        @destroy_elements(list[i]) 
-      else
-        @destroy_element(list[i])
-      i++
-    return
-
-  destroy_element: (element) ->
-    @log "destroy_element #{element.uniqueDataAttr()}", "trace"
-    element.destroy()
+    element.destroy() for element in list
     return
 
   moveToFirstRootElement: ->
@@ -458,7 +474,7 @@ class SwitchAccess
         return @moveToPreviousLevel()
 
     if @moveToNext()
-      @runtime.element.current.jq_element().trigger("switch-access-move", [@runtime.element.idx, @runtime.element.level, @runtime.element.current])
+      @runtime.element.current.jq_element().triggerHandler("switch-access-move", [@runtime.element.idx, @runtime.element.level, @runtime.element.current])
       return SwitchAccessCommon.actions.moved_to_next_element
     else
       return SwitchAccessCommon.actions.stayed_at_element
@@ -472,7 +488,7 @@ class SwitchAccess
       # return SwitchAccessCommon.actions.stayed_at_element
 
     if @moveToNext()
-      @runtime.element.current.jq_element().trigger("switch-access-enter-group", [@runtime.element.idx, @runtime.element.level, @runtime.element.current])
+      @runtime.element.current.parent().jq_element().triggerHandler("switch-access-enter-group", [@runtime.element.idx, @runtime.element.level, @runtime.element.current])
       return SwitchAccessCommon.actions.moved_to_next_level
     else
       return SwitchAccessCommon.actions.stayed_at_element
@@ -487,7 +503,7 @@ class SwitchAccess
       @runtime.element.next_idx = 0
     
     if @moveToNext()
-      @runtime.element.current.jq_element().trigger("switch-access-leave-group", [@runtime.element.idx, @runtime.element.level, @runtime.element.current])
+      @runtime.element.current.jq_element().triggerHandler("switch-access-leave-group", [@runtime.element.idx, @runtime.element.level, @runtime.element.current])
       return SwitchAccessCommon.actions.moved_to_previous_level
     else
       return SwitchAccessCommon.actions.stayed_at_element
@@ -549,7 +565,7 @@ class SwitchAccess
   ### 
   makeElementVisible: ->
     return unless @options.visual.ensure_visible_element == true
-    @log "makeElementVisible"
+    @log "makeElementVisible", "trace"
     scrollval = null
     scroll_top = $(document).scrollTop()
     element = @runtime.element.current.jq_element()
@@ -613,7 +629,7 @@ class SwitchAccess
 
     @log "Triggering Element: IDX: #{@runtime.element.current_idx} Element Tag: #{$(element_to_click).get(0).tagName.toLowerCase()} Text: #{$(element_to_click).text()}"
 
-    @runtime.element.current.jq_element().trigger("switch-access-activate", [@runtime.element.idx, @runtime.element.level, element_to_click, @runtime.element.current])
+    @runtime.element.current.jq_element().triggerHandler("switch-access-activate", [@runtime.element.idx, @runtime.element.level, element_to_click, @runtime.element.current])
     if element_to_click.length > 0
       element_to_click[0].click() #trigger("click")
       # if (ret == true) && element_to_click.is("a")
@@ -632,11 +648,11 @@ class SwitchAccess
 
 
   singleSwitchTimerCallback: ->
-    @log "singleSwitchTimerCallback"
+    @log "singleSwitchTimerCallback", "trace"
     @moveToNextElementAtLevel();
 
   allowKeyPressCallback: ->
-    @log "allowKeyPressCallback"
+    @log "allowKeyPressCallback", "trace"
     @runtime.keypress_allowed = true
 
   createHighlighterHolder: ->
@@ -747,6 +763,9 @@ class SwitchAccessElement
   destroy: ->
     @log "destroy", "trace"
     @destroyHighlighter()
+    # destroy any children
+    child.destroy() for child in @children()
+
     parent = null
     children = null
     jq_element = null
