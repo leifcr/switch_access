@@ -300,22 +300,26 @@ class SwitchAccess
     if (@options.debug)
       appender = null
       @logger = log4javascript.getLogger()
-      if $('#logger').length > 0
-        if $('#logger').find('iframe').length <= 0
+      if $('iframe[id*=log4javascript]').length <= 0
+        if $('#logger').length > 0
           appender = new log4javascript.InPageAppender("logger")
           appender.setWidth("100%")
           appender.setHeight("100%")
-          appender.setThreshold(log4javascript.Level.ALL)
-          @logger.setLevel(log4javascript.Level.ALL)
-          @logger.addAppender(appender)
+        else
+          appender = new log4javascript.InPageAppender()
+          appender.setHeight("500px")          
 
-    @log("init")
+        appender.setThreshold(log4javascript.Level.ALL)
+        @logger.setLevel(log4javascript.Level.ALL)
+        @logger.addAppender(appender)
+
+    @log("init") if (@options.debug)
     @createHighlighterHolder() if SwitchAccessCommon.options.highlighter.use
     @registerCallbacks()
     @start();
 
   setoptions: (options) ->
-    @log "setoptions"
+    @log "setoptions" if (@options.debug)
     # @log options, "trace", true
     @stop() if @runtime.active == true
     jQuery.extend SwitchAccessCommon.options, {
@@ -341,8 +345,9 @@ class SwitchAccess
   checkForNonNumberedElements: ->
     if $(".#{@options.dom.element_class}").length > 0
       msg = "Warning! #{$(".#{@options.dom.element_class}").length} element(s) without numbers found. Class selector is: #{@options.element_class}."
+      @log msg, "warning" if (@options.debug)
       console.log "SwitchAccess: " + msg # This needs to be shown on the console, as it affects the functionality
-      @log msg, "warning"
+    return
 
   buildListFromjqElement: (jq_element, parent, depth = 0) ->
     not_str = "[class*=#{@options.dom.element_class}] [class*=#{@options.dom.element_class}]"
@@ -352,7 +357,7 @@ class SwitchAccess
       i++
 
     temp_list = jq_element.find("[class*=#{@options.dom.element_class}]").not(not_str)
-    @log "buildListFromjqElement - element count #{temp_list.length} depth: #{depth} element-classes:#{jq_element.attr("class")}", "trace"
+    @log "buildListFromjqElement - element count #{temp_list.length} depth: #{depth} element-classes:#{jq_element.attr("class")}", "trace" if (@options.debug)
     return [] if temp_list.length <= 0
     # warn if there are any elements that don't have any numbers
     @hashAlizeAndRecurseList(@sortList(temp_list, @options.dom.element_class), parent, depth)
@@ -368,7 +373,7 @@ class SwitchAccess
     ret
 
   sortList: (list, list_class) ->
-    @log "sortList Sorting list for #{list_class} Elements: #{list.length}"
+    @log "sortList Sorting list for #{list_class} Elements: #{list.length}" if (@options.debug)
     search_regexp_class = ///#{list_class}\d+///
     search_regexp_num = ///\d+///
     list.sort (a,b) =>
@@ -379,12 +384,11 @@ class SwitchAccess
       if (item_class_name_a != null && item_class_name_b != null)
         num_a = search_regexp_num.exec(item_class_name_a)
         num_b = search_regexp_num.exec(item_class_name_b)
-      # @log "Sort: #{num_a} #{num_b}", "trace"
       num_a - num_b
     list
 
   elementWithoutChildren: (element) ->
-    @log "elementWithoutChildren #{element.uniqueDataAttr()}"
+    @log "elementWithoutChildren #{element.uniqueDataAttr()}" if (@options.debug)
     ret = []
     if element.children().length == 0
       ret.push(element)
@@ -396,7 +400,7 @@ class SwitchAccess
 
 
   flattenElementList: ->
-    @log "flattenElementList"
+    @log "flattenElementList" if (@options.debug)
     new_list = []
     new_list = new_list.concat(@elementWithoutChildren(element)) for element in @runtime.element_list
     new_list
@@ -408,17 +412,17 @@ class SwitchAccess
     if @options.switches.groups == false
       @runtime.element_list = @flattenElementList()
 
-    @log "buildElementList: count:#{@runtime.element_list.length}, class-name: #{@options.dom.element_class}"
+    @log "buildElementList: count:#{@runtime.element_list.length}, class-name: #{@options.dom.element_class}" if (@options.debug)
     return
 
   deinit: ->
-    @log "deinit"
+    @log "deinit" if (@options.debug)
     @stop()
     @removeHighlightdiv()
 
   start: ->
     return if (@options.switches.number_of_switches == 0) || (@runtime.active == true)
-    @log "start"
+    @log "start" if (@options.debug)
     @buildElementList()
     # return
     @runtime.active = true
@@ -428,14 +432,14 @@ class SwitchAccess
 
   stop: ->
     return if (@runtime.active == false)
-    @log "stop"
+    @log "stop" if (@options.debug)
     @runtime.active = false
     @removeHighlight()
     @removeActivateClass()
     @stopSingleSwitchTimer()
 
   destroy: ->
-    @log "destroy"
+    @log "destroy" if (@options.debug)
     @stop()
     @removeCallbacks()
     @destroy_elements(@runtime.element_list)
@@ -452,7 +456,7 @@ class SwitchAccess
   Children of the element will be destroyed by the element itself
   ###
   destroy_elements: (list) ->
-    @log "destroy_elements", "trace"
+    @log "destroy_elements", "trace" if (@options.debug)
     element.destroy() for element in list
     return
 
@@ -461,7 +465,7 @@ class SwitchAccess
     @moveToNextElementAtLevel()
 
   moveToNextElementAtLevel: ->
-    @log "moveToNextElementAtLevel", "trace"
+    @log "moveToNextElementAtLevel", "trace" if (@options.debug)
     @runtime.element.next_idx = @runtime.element.idx + 1
     # verify that next idx is possible for "root"
     if @runtime.element.next_level == @runtime.element.level and @runtime.element.level == 0
@@ -480,7 +484,7 @@ class SwitchAccess
       return SwitchAccessCommon.actions.stayed_at_element
 
   moveToNextLevel: ->
-    @log "moveToNextLevel", "trace"
+    @log "moveToNextLevel", "trace" if (@options.debug)
     # "catch" if the current element doesn't have children
     if @runtime.element.current.children().length > 1
       @runtime.element.next_level = @runtime.element.level + 1
@@ -494,7 +498,7 @@ class SwitchAccess
       return SwitchAccessCommon.actions.stayed_at_element
 
   moveToPreviousLevel: ->
-    @log "moveToPreviousLevel", "trace"
+    @log "moveToPreviousLevel", "trace" if (@options.debug)
     @runtime.element.next_level = @runtime.element.level - 1
     @runtime.element.next_idx = @runtime.element.parent_idx
     # safety catch impossible levelss
@@ -509,7 +513,7 @@ class SwitchAccess
       return SwitchAccessCommon.actions.stayed_at_element
 
   moveToNext: ->
-    @log "moveToNext Current: I: #{@runtime.element.next_idx} L: #{@runtime.element.level} Next: I: #{@runtime.element.next_idx} L: #{@runtime.element.next_level}"
+    @log "moveToNext Current: I: #{@runtime.element.next_idx} L: #{@runtime.element.level} Next: I: #{@runtime.element.next_idx} L: #{@runtime.element.next_level}" if (@options.debug)
     @runtime.action_triggered = true
 
     # return if current level and idxs are equal
@@ -545,13 +549,13 @@ class SwitchAccess
     return true
 
   removeHighlight: ->
-    @log "removeHighlight"
+    @log "removeHighlight" if (@options.debug)
     return if @runtime.element.current is null
     @runtime.element.current.removeHighlight()
     return
 
   removeActivateClass: ->
-    @log "removeHighlight"
+    @log "removeHighlight" if (@options.debug)
     return if @runtime.current_list is null
     if @runtime.element.current.children().length == 0
       @runtime.element.current.removeActivateClass()
@@ -565,7 +569,7 @@ class SwitchAccess
   ### 
   makeElementVisible: ->
     return unless @options.visual.ensure_visible_element == true
-    @log "makeElementVisible", "trace"
+    @log "makeElementVisible", "trace" if (@options.debug)
     scrollval = null
     scroll_top = $(document).scrollTop()
     element = @runtime.element.current.jq_element()
@@ -595,11 +599,11 @@ class SwitchAccess
 
 
   activateElement: ->
-    @log "activateElement"
+    @log "activateElement" if (@options.debug)
     @runtime.action_triggered = true
     @stopSingleSwitchTimer()
 
-    @log "Activate Element: idx: #{@runtime.element.idx} level: IDX: #{@runtime.element.level} uuid: #{@runtime.element.current.uniqueDataAttr()}"
+    @log "Activate Element: idx: #{@runtime.element.idx} level: IDX: #{@runtime.element.level} uuid: #{@runtime.element.current.uniqueDataAttr()}" if (@options.debug)
     if (@options.switches.delay_before_activating_element == 0)
       return @activateElementCallBack()
     else
@@ -613,7 +617,7 @@ class SwitchAccess
       return SwitchAccessCommon.actions.triggered_delayed_action
 
   activateElementCallBack: ->
-    @log "activateElementCallBack"
+    @log "activateElementCallBack" if (@options.debug)
 
     # see if the element has children, if so go into level
     if @runtime.element.current.children().length > 0
@@ -627,7 +631,11 @@ class SwitchAccess
       # if element isn't a link, find first link within element and go to the url/trigger it
       element_to_click = @runtime.element.current.jq_element().find("a")
 
-    @log "Triggering Element: IDX: #{@runtime.element.current_idx} Element Tag: #{$(element_to_click).get(0).tagName.toLowerCase()} Text: #{$(element_to_click).text()}"
+    # safety catch
+    if (element_to_click.length <= 0)
+      element_to_click = @runtime.element.current.jq_element()
+
+    @log "Triggering Element: IDX: #{@runtime.element.current_idx} Element Tag: #{$(element_to_click).get(0).tagName.toLowerCase()} Text: #{$(element_to_click).text()}" if (@options.debug)
 
     @runtime.element.current.jq_element().triggerHandler("switch-access-activate", [@runtime.element.idx, @runtime.element.level, element_to_click, @runtime.element.current])
     if element_to_click.length > 0
@@ -639,8 +647,8 @@ class SwitchAccess
         @runtime.next_level       = 0
         @startSingleSwitchTimer()
     else
-      msg = "Nothing to do. Verify your settings and"
-      @log msg, "warn"
+      msg = "Nothing to do. Verify options passed to SwitchAccess"
+      @log msg, "warn" if (@options.debug)
       console.log "SwitchAccess: Warning: " + msg
       return SwitchAccessCommon.actions.none
 
@@ -648,11 +656,11 @@ class SwitchAccess
 
 
   singleSwitchTimerCallback: ->
-    @log "singleSwitchTimerCallback", "trace"
+    @log "singleSwitchTimerCallback", "trace" if (@options.debug)
     @moveToNextElementAtLevel();
 
   allowKeyPressCallback: ->
-    @log "allowKeyPressCallback", "trace"
+    @log "allowKeyPressCallback", "trace" if (@options.debug)
     @runtime.keypress_allowed = true
 
   createHighlighterHolder: ->
@@ -665,7 +673,7 @@ class SwitchAccess
     $("div##{SwitchAccessCommon.options.highlighter.holder_id}").remove()
 
   callbackForKeyPress: (event) ->
-    @log "callbackForKeyPress keycode: #{event.which} Allowed: #{@runtime.keypress_allowed}"
+    @log "callbackForKeyPress keycode: #{event.which} Allowed: #{@runtime.keypress_allowed}" if (@options.debug)
     return if (@options.switches.number_of_switches == 0)
     action = 0
 
@@ -710,20 +718,20 @@ class SwitchAccess
 
   startSingleSwitchTimer: ->
     return unless @options.switches.number_of_switches == 1
-    @log "startSingleSwitchTimer", "trace"
+    @log "startSingleSwitchTimer", "trace" if (@options.debug)
     @runtime.single_switch_timer_id = window.setInterval(( => @singleSwitchTimerCallback();return), @options.switches.single_switch_move_time)
 
   stopSingleSwitchTimer: ->
     return unless @options.switches.number_of_switches == 1
-    @log "stopSingleSwitchTimer", "trace"
+    @log "stopSingleSwitchTimer", "trace" if (@options.debug)
     window.clearInterval(@runtime.single_switch_timer_id)
 
   removeCallbacks: ->
-    @log "removeCallbacks", "trace"
+    @log "removeCallbacks", "trace" if (@options.debug)
     $(document).off("keydown.switch_access");
 
   registerCallbacks: ->
-    @log "registerCallbacks", "trace"
+    @log "registerCallbacks", "trace" if (@options.debug)
     # $(document).on("keypress", @callbackForKeyPress)
     # $(document).on("keydown", (event) => 
     $(document).on("keydown.switch_access", (event) => 
@@ -748,7 +756,7 @@ class SwitchAccessElement
       children:         children     # the child switch-elements of this element
       highlight_holder: null         # the highlight holder from SwitchAccess
 
-    @logger = logger
+    @logger = logger if (@options.debug)
 
     @runtime.highlight_holder = if highlight_holder == null then $('body') else highlight_holder
     
@@ -758,10 +766,10 @@ class SwitchAccessElement
     @options.debug = SwitchAccessCommon.options.debug
     @uniqueDataAttr(true)
     @createHighlighter(highlight_holder)
-    @log "init", "trace"
+    @log "init", "trace" if (@options.debug)
 
   destroy: ->
-    @log "destroy", "trace"
+    @log "destroy", "trace" if (@options.debug)
     @destroyHighlighter()
     # destroy any children
     child.destroy() for child in @children()
@@ -789,8 +797,7 @@ class SwitchAccessElement
       @runtime.jq_element = jq_element
 
   log: (msg, type = "debug", raw = false) ->
-    #console.log msg if @options.nested_debug
-    if @options.debug && @logger != null
+    if @options.debug && @logger != null 
       if (raw)
         @logger.log "Element: #{@runtime.uuid} :", type
         @logger.log msg, type, true
@@ -801,13 +808,13 @@ class SwitchAccessElement
   Trigger the active element, link or event depending on options
   ###
   trigger: ->
-    @log "trigger"
+    @log "trigger" if (@options.debug)
 
   ###
   Show the highlighter and add highlight class to current object
   ###
   highlight: (check_children = true) ->
-    @log "highlight"
+    @log "highlight" if (@options.debug)
     # if the element has children, it's most likely that the children should be highlighted
     if @children().length > 0 and check_children == true
       child.highlight(false) for child in @children()
@@ -828,7 +835,7 @@ class SwitchAccessElement
   Hide highlighter and remove highlight class on the current object(s)
   ###
   removeHighlight: (check_children = true) ->
-    @log "removeHighlight"
+    @log "removeHighlight" if (@options.debug)
 
     # if set to check for children:
     if @children().length > 0 and check_children == true
@@ -850,7 +857,7 @@ class SwitchAccessElement
     @runtime.jq_highlighter.addClass(SwitchAccessCommon.options.highlighter.activate_class)
 
   removeActivateClass: ->
-    @log "removeActivateClass"
+    @log "removeActivateClass" if (@options.debug)
     @runtime.jq_element.removeClass(SwitchAccessCommon.options.highlight.element.activate_class)
     return unless SwitchAccessCommon.options.highlighter.use
     @runtime.jq_highlighter.removeClass(SwitchAccessCommon.options.highlighter.activate_class)
@@ -867,14 +874,14 @@ class SwitchAccessElement
   ###
   setHighlighterPosition: (element, highlighter) ->
     # posshift = SwitchAccessCommon.options.highlighter.margin_to_element #+ ((highlighter.outerWidth() - highlighter.innerWidth())/2)
-    @log "m_to_el: #{SwitchAccessCommon.options.highlighter.margin_to_element}, outerW-innerW: #{highlighter.outerWidth() - highlighter.width()} outerH-innerH: #{highlighter.outerHeight() - highlighter.innerHeight()}", "trace"
+    @log "m_to_el: #{SwitchAccessCommon.options.highlighter.margin_to_element}, outerW-innerW: #{highlighter.outerWidth() - highlighter.width()} outerH-innerH: #{highlighter.outerHeight() - highlighter.innerHeight()}", "trace" if (@options.debug)
     position = {
       top:  element.offset().top  - SwitchAccessCommon.options.highlighter.margin_to_element - (highlighter.outerHeight() - highlighter.innerHeight())/2
       left: element.offset().left - SwitchAccessCommon.options.highlighter.margin_to_element - (highlighter.outerWidth()  - highlighter.innerWidth())/2
     }
     return if (highlighter.offset().top == position.top) and (highlighter.offset().left == position.left)
     highlighter.offset(position)
-    @log "setHighlighterPosition left: #{position.left} top: #{position.top}", "trace"
+    @log "setHighlighterPosition left: #{position.left} top: #{position.top}", "trace" if (@options.debug)
     return
 
   ###
@@ -886,7 +893,7 @@ class SwitchAccessElement
    
     highlighter.width(w)
     highlighter.height(h)
-    @log "setHighlighterSize w: #{w}, h: #{h}", "trace"
+    @log "setHighlighterSize w: #{w}, h: #{h}", "trace" if (@options.debug)
     return
 
   ###
@@ -894,7 +901,7 @@ class SwitchAccessElement
   ###
   createHighlighter: (jq_holder)->
     return if (SwitchAccessCommon.options.highlighter.use is false) or (@runtime.jq_highlighter isnt null)
-    @log "createHighlight"
+    @log "createHighlight" if (@options.debug)
 
     @runtime.jq_highlighter = $("<div id=\"sw-el-#{@runtime.uuid}\" class=\"#{SwitchAccessCommon.options.highlighter.class}\"></div>")
     jq_holder.append(@runtime.jq_highlighter)
@@ -912,7 +919,8 @@ class SwitchAccessElement
   ###
   destroyHighlighter: ->
     return if @runtime.jq_highlighter == null
-    @log "destroyHighlight", "trace"
+    @log "destroyHighlight", "trace" if (@options.debug)
+    @disableCSSWatch()
 
     @runtime.jq_highlighter.remove()
     @runtime.jq_highlighter = null
@@ -922,7 +930,7 @@ class SwitchAccessElement
   ###
   enableCSSWatch: ->
     return unless SwitchAccessCommon.options.highlighter.use == true && SwitchAccessCommon.options.highlighter.watch_for_resize 
-    @log "enableCSSWatch", "trace"
+    @log "enableCSSWatch", "trace" if (@options.debug)
     @runtime.watching = true
     if @runtime.csswatch_init
       @runtime.jq_element.csswatch('start')
@@ -946,7 +954,7 @@ class SwitchAccessElement
   ###
   disableCSSWatch: ->
     return unless SwitchAccessCommon.options.highlighter.use == true && SwitchAccessCommon.options.highlighter.watch_for_resize
-    @log "disableCSSWatch", "trace"
+    @log "disableCSSWatch", "trace" if (@options.debug)
     @runtime.watching = false
     @runtime.jq_element.csswatch('stop')
 
@@ -955,7 +963,7 @@ class SwitchAccessElement
   Will also add the same attribute as a class if option set_unique_element_class is enabled.
   ###
   uniqueDataAttr: (create = false) ->
-    @log "uniqueDataAttr: Create: #{create}", "trace"
+    @log "uniqueDataAttr: Create: #{create}", "trace" if (@options.debug)
     if create
       @runtime.uuid = SwitchAccessCommon.generateRandomUUID()
       @runtime.jq_element.data(SwitchAccessCommon.options.internal.unique_element_data_attribute, @runtime.uuid)
@@ -969,7 +977,7 @@ class SwitchAccessElement
   Callback for resize event on this particular element
   ###
   callbackForResize: (event, changes) ->
-    @log "callbackForResize", "trace"
+    @log "callbackForResize", "trace" if (@options.debug)
     return unless SwitchAccessCommon.options.highlighter.use
     @setHighlighterSize(@runtime.jq_element, @runtime.jq_highlighter)
     @setHighlighterPosition(@runtime.jq_element, @runtime.jq_highlighter)
