@@ -18,16 +18,18 @@ SwitchAccessCommon =
     ###
     highlighter:
       ###
-      Use highlighter div element for each element.
-      A div is positioned absolute around the element and shown/hidden accordingly
+      Use highlighter div element for each element. A div is positioned absolute
+      around the element and shown/hidden accordingly
       Default: true
       ###
       use:                      true
       
       ###
       Additional content for the highlighter
-      Note: The content is placed within every highlighter and multiple highlighters can be visible at the same time.
-            It is best to not use ID's on elements placed inside the highlighter
+      Note: The content is placed within every highlighter and multiple
+      highlighters can be visible at the same time. It is best to not
+      use IDs on elements placed inside the highlighter, to avoid duplicate
+      IDs on a page
       Default: ""
       ###
       content:                  ""
@@ -45,7 +47,7 @@ SwitchAccessCommon =
       current_class:            "current"
 
       ###
-      The class when set on a highlighter when activated action is triggered 
+      The class when set on a highlighter when activated action is triggered
       Note: only usable if options.visual.delay_before_activating_element is > 0
       Default: "activate"
       ###
@@ -64,7 +66,7 @@ SwitchAccessCommon =
       
       ###
       Use CSS watch to watch the element for changes in position and dimensions
-      This is only needed if you have javascript or other DOM elements 
+      This is only needed if you have javascript or other DOM elements
       that might change the position or size of a switch-enabled element
       Default: false
       ###
@@ -92,8 +94,10 @@ SwitchAccessCommon =
         current_class:         "current"
 
         ###
-        The class when set on a switch-element when activated action is triggered 
-        Note: only usable if options.visual.delay_before_activating_element is > 0
+        The class when set on a switch-element when activated
+        action is triggered
+        Note: options.visual.delay_before_activating_element must
+        be greater than 0
         Default: "activate"
         ###
         activate_class:        "activate"
@@ -142,34 +146,34 @@ class SwitchAccess
     ###
     Options
     ###
-    @options = 
+    @options =
       ###
-      Switch/Key settings 
+      Switch/Key settings
       ###
       switches:
 
-        ### 
-        The number of switches 0 = disable, 1 = single switch, 2 = two switches 
+        ###
+        The number of switches 0 = disable, 1 = single switch, 2 = two switches
         Default: 2
         ###
         number_of_switches:                  0
 
         ###
         Array for the keycodes to use as single switch (Multiple keycodes possible)
-        Default: [32, 13]  (32 = 'Space', 13 = 'Enter')        
+        Default: [32, 13]  (32 = 'Space', 13 = 'Enter')
         ###
         keys_1:                              [32, 13] # Space / Enter
 
         ###
         Array of two arrays for the keys to use as two switches
-        Default: [[32, 9], [13]] (9 = 'Tab, 32 = 'Space', 13 = 'Enter')        
+        Default: [[32, 9], [13]] (9 = 'Tab, 32 = 'Space', 13 = 'Enter')
         ###
         keys_2:                              [[9, 32], [13]] # Tab + Space / Enter
         
         #keys_3:                             # forward/backward and select
         
         ###
-        Time for single switch scanning to move from element to element 
+        Time for single switch scanning to move from element to element
         Default: 1500 milliseconds
         ###
         single_switch_move_time:             1500
@@ -181,7 +185,7 @@ class SwitchAccess
         single_switch_restart_on_activate:   true
 
         ###
-        Time after "triggering" a element to it's activated 
+        Time after "triggering" a element to it's activated
         Default: 0
         ###
         delay_before_activating_element:     0
@@ -190,13 +194,13 @@ class SwitchAccess
         Delay before an keypress is "allowed" after last keypress.
         Default: 250 ms
         ###
-        delay_for_allowed_keypress:          250;
+        delay_for_allowed_keypress:          250
 
         ###
         Groups enabled/disabled (If elements should be grouped or run as single elements)
         Default: true
         ###
-        groups:                              true;
+        groups:                              true
 
       ###
       DOM options
@@ -204,11 +208,12 @@ class SwitchAccess
       dom:
         ###
         The class which all elements must have to be a switch controlled element
-        The class should be appended with numbers 1,2,3 etc to set order of elements. order is unpredicaable if several
-        elements have the same number within a group.
+        The class should be appended with numbers 1,2,3 etc to set order of elements.
+        order is unpredicaable if several elements have the same number within a group.
+        Use classnames switch-element-1 switch-element-2 or change this value
         Default: "switch-element-"
         ###
-        element_class:            "switch-element-" # Use classnames such as switch-element-1 switch-element-2 or change this value
+        element_class:            "switch-element-"
         ###
         The jQuery selector from where the first switch element should be searched for.
         Usually this should be body or the first container on the webpage
@@ -225,7 +230,7 @@ class SwitchAccess
       ###
       If set to true, the first link within the element is "clicked".
       Else the actual element is clicked.
-      FUTURE feature: (on the todo list) 
+      FUTURE feature: (on the todo list)
       A data attribute can be set on the element in order to override this on a per-element basis
       ###
       activate_first_link:    true # activate element or first link within
@@ -247,16 +252,18 @@ class SwitchAccess
         ensure_visible_element: true # ensure element is visible on the page
 
         ###
-        The number of pixels for margin to the viewport/window when the element is positioned in the viewport/window
+        The number of pixels for margin to the viewport/window when
+        the element is positioned in the viewport/window
         Default: 15
         ###
-        scroll_offset:          15 # offset from top/bottom in pixels for the element
+        scroll_offset:          15
 
         ###
-        Time in milliseconds the scroll will last (set to 0 if instant scroll is preferred)
+        Time in milliseconds the scroll will animate
+        (set to 0 if instant scroll is preferred)
         Default: 200
         ###
-        animate_scroll_time:    200 # time to use for animating scroll
+        animate_scroll_time:    200
         ###
         The easing to use for animation
         Default: "linear"
@@ -273,19 +280,22 @@ class SwitchAccess
     ###
     Runtime properties
     ###
-    @runtime = 
+    @runtime =
       active:             false # switchaccess is active or not
-      element_list:       null # an array hashes with element + children
-      current_list:       null # the current list (Root or a elements list of children)
-      parent_list:        null # the list the parent is in when moving into a child
-      # next_element:                 null # next_element_list ?
+      element_list:       null # an array with root elements
+      current_list:       null # the current list
+                               # (Root or an elements list of children)
+
+      parent_list:        null # the list the parent is in after going into
+                               # the group and highlighting the first child
+
       element:
         current:          null  # the current element within the active group
         idx:              0     # the current element idx within the active group
         level:            0     # the current level within a group or nested group
         next_level:       0     # next level when moving to elements.
         next_idx:         0     # next elements idx
-        parent_idx:       0     # the last idx on the parent before moving into the children of an element
+        parent_idx:       0     # the last idx on the parent before moving into the group
       action_triggered:   false # set to true if an action is triggered
       keypress_allowed:   true  # keypress allowed or not
       timers:
@@ -293,8 +303,8 @@ class SwitchAccess
 
       highlighter_holder: null  # The highlighter holder as a jquery object
     
-    @setoptions(options);
-    @init();
+    @setoptions(options)
+    @init()
   
   init: ->
     if (@options.debug)
@@ -307,7 +317,7 @@ class SwitchAccess
           appender.setHeight("100%")
         else
           appender = new log4javascript.InPageAppender()
-          appender.setHeight("500px")          
+          appender.setHeight("500px")
 
         appender.setThreshold(log4javascript.Level.ALL)
         @logger.setLevel(log4javascript.Level.ALL)
@@ -316,15 +326,15 @@ class SwitchAccess
     @log("init") if (@options.debug)
     @createHighlighterHolder() if SwitchAccessCommon.options.highlighter.use
     @registerCallbacks()
-    @start();
+    @start()
 
   setoptions: (options) ->
     @log "setoptions" if (@options.debug)
     # @log options, "trace", true
     @stop() if @runtime.active == true
     jQuery.extend SwitchAccessCommon.options, {
-      highlighter: options.highlighter, 
-      highlight:   options.highlight, 
+      highlighter: options.highlighter,
+      highlight:   options.highlight,
       internal:    options.internal,
       debug:       options.debug
     }
@@ -338,15 +348,15 @@ class SwitchAccess
     #console.log msg if @options.nested_debug
     if (@options.debug)
       if (raw)
-        @logger[type] msg 
+        @logger[type] msg
       else
-        @logger[type] "SwitchAccess: " + msg 
+        @logger[type] "SwitchAccess: " + msg
 
   checkForNonNumberedElements: ->
     if $(".#{@options.dom.element_class}").length > 0
       msg = "Warning! #{$(".#{@options.dom.element_class}").length} element(s) without numbers found. Class selector is: #{@options.element_class}."
       @log msg, "warning" if (@options.debug)
-      console.log "SwitchAccess: " + msg # This needs to be shown on the console, as it affects the functionality
+      console.log "SwitchAccess: " + msg # Alert about no-numbered elements
     return
 
   buildListFromjqElement: (jq_element, parent, depth = 0) ->
@@ -503,7 +513,7 @@ class SwitchAccess
     @runtime.element.next_idx = @runtime.element.parent_idx
     # safety catch impossible levelss
     if @runtime.element.next_level < 0
-      @runtime.element.next_level = 0 
+      @runtime.element.next_level = 0
       @runtime.element.next_idx = 0
     
     if @moveToNext()
@@ -521,7 +531,7 @@ class SwitchAccess
 
     @removeHighlight()
 
-    # find list to work on element    
+    # find list to work on element
     if @runtime.element.next_level > @runtime.element.level
       list_n = @runtime.element.current.children()
       @runtime.element.parent_idx = @runtime.element.idx
@@ -566,7 +576,7 @@ class SwitchAccess
 
   ###
   Make the element(s) visible. If the current selected element is a group, they are all moved inside the visible area of the screen
-  ### 
+  ###
   makeElementVisible: ->
     return unless @options.visual.ensure_visible_element == true
     @log "makeElementVisible", "trace" if (@options.debug)
@@ -657,7 +667,7 @@ class SwitchAccess
 
   singleSwitchTimerCallback: ->
     @log "singleSwitchTimerCallback", "trace" if (@options.debug)
-    @moveToNextElementAtLevel();
+    @moveToNextElementAtLevel()
 
   allowKeyPressCallback: ->
     @log "allowKeyPressCallback", "trace" if (@options.debug)
@@ -680,16 +690,16 @@ class SwitchAccess
     if @options.switches.number_of_switches == 1
       if event.which in @options.switches.keys_1
         if !@runtime.keypress_allowed
-          event.stopPropagation();
+          event.stopPropagation()
           return false
         action = @activateElement()
 
     else if @options.switches.number_of_switches == 2
       if (event.which in @options.switches.keys_2[0]) || (event.which in @options.switches.keys_2[1])
         if !@runtime.keypress_allowed
-          event.stopPropagation();
+          event.stopPropagation()
           return false
-      action = @moveToNextElementAtLevel() if event.which in @options.switches.keys_2[0]          
+      action = @moveToNextElementAtLevel() if event.which in @options.switches.keys_2[0]
       action = @activateElement() if event.which in @options.switches.keys_2[1]
 
     if (@runtime.action_triggered)
@@ -711,7 +721,7 @@ class SwitchAccess
       else
         window.setTimeout((=>@allowKeyPressCallback();return), timeout)
 
-      event.stopPropagation();
+      event.stopPropagation()
       return false
     else
       return true
@@ -728,25 +738,23 @@ class SwitchAccess
 
   removeCallbacks: ->
     @log "removeCallbacks", "trace" if (@options.debug)
-    $(document).off("keydown.switch_access");
+    $(document).off("keydown.switch_access")
 
   registerCallbacks: ->
     @log "registerCallbacks", "trace" if (@options.debug)
-    # $(document).on("keypress", @callbackForKeyPress)
-    # $(document).on("keydown", (event) => 
-    $(document).on("keydown.switch_access", (event) => 
+    $(document).on("keydown.switch_access", (event) =>
       @callbackForKeyPress(event)
-    ) 
+    )
     return
 
 window.SwitchAccess = SwitchAccess
 
 class SwitchAccessElement
   constructor: (jq_element, highlight_holder = null, logger = null, parent = null, children = []) ->
-    @options = 
+    @options =
       debug: false
 
-    @runtime = 
+    @runtime =
       jq_highlighter:   null         # jquery object of the highlighter belonging to this element
       jq_element:       jq_element   # jquery object of this element
       uuid:             null         # The UUID for this element
@@ -797,7 +805,7 @@ class SwitchAccessElement
       @runtime.jq_element = jq_element
 
   log: (msg, type = "debug", raw = false) ->
-    if @options.debug && @logger != null 
+    if @options.debug && @logger != null
       if (raw)
         @logger.log "Element: #{@runtime.uuid} :", type
         @logger.log msg, type, true
@@ -900,13 +908,14 @@ class SwitchAccessElement
   Create the highlighter DOM object
   ###
   createHighlighter: (jq_holder)->
-    return if (SwitchAccessCommon.options.highlighter.use is false) or (@runtime.jq_highlighter isnt null)
+    return if (SwitchAccessCommon.options.highlighter.use is false) or
+      (@runtime.jq_highlighter isnt null)
     @log "createHighlight" if (@options.debug)
 
     @runtime.jq_highlighter = $("<div id=\"sw-el-#{@runtime.uuid}\" class=\"#{SwitchAccessCommon.options.highlighter.class}\"></div>")
     jq_holder.append(@runtime.jq_highlighter)
     @runtime.jq_highlighter.css('position','absolute')
-    @runtime.jq_highlighter.hide();
+    @runtime.jq_highlighter.hide()
     @runtime.jq_highlighter.append(SwitchAccessCommon.options.highlighter.content)
 
     if SwitchAccessCommon.options.watch_for_resize
@@ -926,10 +935,11 @@ class SwitchAccessElement
     @runtime.jq_highlighter = null
 
   ###
-  Enable wathcing CSS changes on the element belonging to this object  
+  Enable wathcing CSS changes on the element belonging to this object
   ###
   enableCSSWatch: ->
-    return unless SwitchAccessCommon.options.highlighter.use == true && SwitchAccessCommon.options.highlighter.watch_for_resize 
+    return unless SwitchAccessCommon.options.highlighter.use == true and
+      SwitchAccessCommon.options.highlighter.watch_for_resize == true
     @log "enableCSSWatch", "trace" if (@options.debug)
     @runtime.watching = true
     if @runtime.csswatch_init
@@ -953,14 +963,16 @@ class SwitchAccessElement
   Disable watching CSS changes on the element belonging to this object
   ###
   disableCSSWatch: ->
-    return unless SwitchAccessCommon.options.highlighter.use == true && SwitchAccessCommon.options.highlighter.watch_for_resize
+    return unless SwitchAccessCommon.options.highlighter.use == true and
+      SwitchAccessCommon.options.highlighter.watch_for_resize == true
     @log "disableCSSWatch", "trace" if (@options.debug)
     @runtime.watching = false
     @runtime.jq_element.csswatch('stop')
 
   ###
   Add a data attribute to the element that has a unique ID.
-  Will also add the same attribute as a class if option set_unique_element_class is enabled.
+  Will also add the same attribute as a class if option
+  set_unique_element_class is enabled.
   ###
   uniqueDataAttr: (create = false) ->
     @log "uniqueDataAttr: Create: #{create}", "trace" if (@options.debug)
@@ -993,10 +1005,3 @@ class SwitchAccessElement
   Play the sound for the current element upon activation
   ###
   # playActivateSound: ->
-
-
-# TODO: Fix instance object timeout:
-# setTimeout(function(thisObj) { thisObj.methodToCall(); }, time, this)
-# this is for ie/ff/chrome ?
-# setTimeout( function() { return this.methodToCall.apply( this, arguments ); }, time );
-
