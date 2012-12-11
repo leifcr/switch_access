@@ -3,7 +3,7 @@ Switch Access for webpages
 (c) 2012 Leif Ringstad
 Dual-licensed under GPL or commercial license (LICENSE and LICENSE.GPL)
 Source: http://github.com/leifcr/switch_access
-v 1.1.3
+v 1.1.4
 ###
 
 SwitchAccessCommon =
@@ -764,6 +764,7 @@ class SwitchAccessElement
       children:         children     # the child switch-elements of this element
       highlight_holder: null         # the highlight holder from SwitchAccess
 
+    @options.debug = SwitchAccessCommon.options.debug
     @logger = logger if (@options.debug)
 
     @runtime.highlight_holder = if highlight_holder == null then $('body') else highlight_holder
@@ -771,7 +772,6 @@ class SwitchAccessElement
     @init(@runtime.highlight_holder)
   
   init: (highlight_holder)->
-    @options.debug = SwitchAccessCommon.options.debug
     @uniqueDataAttr(true)
     @createHighlighter(highlight_holder)
     @log "init", "trace" if (@options.debug)
