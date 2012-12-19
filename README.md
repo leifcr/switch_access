@@ -247,6 +247,13 @@ All methods assume that you initiated the controller similar to the above exampl
     ###
     holder_id:               "sw-highlighter-holder"
 
+    ###
+    Read out the z-index for the element to be highlighted and set to 1 less than the value specified
+    on the element.
+    If it's set to inherit or auto it will create set z-index 5371 on the element and 5370 on the highlighter
+    ###
+    auto_z_index:            true
+
   ###
   Options specific to highlighting
   ###
