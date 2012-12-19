@@ -3,7 +3,7 @@ Switch Access for webpages
 (c) 2012 Leif Ringstad
 Dual-licensed under GPL or commercial license (LICENSE and LICENSE.GPL)
 Source: http://github.com/leifcr/switch_access
-v 1.1.4
+v 1.1.5
 ###
 
 SwitchAccessCommon =
@@ -78,6 +78,13 @@ SwitchAccessCommon =
       Default: "sw-highlighter-holder"
       ###
       holder_id:               "sw-highlighter-holder"
+      
+      ###
+      Read out the z-index for the element to be highlighted and set to 1 less than the value specified
+      on the element.
+      If it's set to inherit or auto it will create set z-index 5371 on the element and 5370 on the highlighter
+      ###
+      auto_z_index:            true
 
     ###
     Options specific to highlighting
@@ -763,9 +770,11 @@ class SwitchAccessElement
       parent:           parent       # the parent switch-element of this element
       children:         children     # the child switch-elements of this element
       highlight_holder: null         # the highlight holder from SwitchAccess
+      element_zidx:     jq_element.css('z-index') # the z-index on the element before modifying it
 
     @options.debug = SwitchAccessCommon.options.debug
     @logger = logger if (@options.debug)
+
 
     @runtime.highlight_holder = if highlight_holder == null then $('body') else highlight_holder
     
@@ -832,6 +841,15 @@ class SwitchAccessElement
     @runtime.jq_element.addClass(SwitchAccessCommon.options.highlight.element.current_class)
     return unless SwitchAccessCommon.options.highlighter.use
     @runtime.jq_highlighter.addClass(SwitchAccessCommon.options.highlighter.current_class)
+
+    # read element z-index if required
+    if SwitchAccessCommon.options.highlighter.auto_z_index == true
+      if (isNaN(@runtime.element_zidx) == true)
+        @runtime.jq_element.css('z-index', 5371);
+        @runtime.jq_highlighter.css('z-index', 5370)
+      else
+        @runtime.jq_highlighter.css('z-index', @runtime.element_zidx - 1);
+
     @runtime.jq_highlighter.show()
     # Must show the element before moving, else the offset will not be correct
     @setHighlighterSizeAndPosition()
@@ -856,6 +874,10 @@ class SwitchAccessElement
     @runtime.jq_highlighter.removeClass(SwitchAccessCommon.options.highlighter.current_class)
     @runtime.jq_highlighter.removeClass(SwitchAccessCommon.options.highlighter.activate_class)
     @runtime.jq_highlighter.hide()
+
+    if SwitchAccessCommon.options.highlighter.auto_z_index == true
+      @runtime.jq_element.css('z-index', @runtime.element_zidx);
+
     if SwitchAccessCommon.options.highlighter.watch_for_resize
       @disableCSSWatch()
 
