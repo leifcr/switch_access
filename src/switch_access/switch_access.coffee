@@ -3,7 +3,7 @@ Switch Access for webpages
 (c) 2012 Leif Ringstad
 Dual-licensed under GPL or commercial license (LICENSE and LICENSE.GPL)
 Source: http://github.com/leifcr/switch_access
-v 1.1.5
+v 1.1.6
 ###
 
 SwitchAccessCommon =
