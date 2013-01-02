@@ -277,6 +277,29 @@ All methods assume that you initiated the controller similar to the above exampl
 
 ```
 
+## Special data attributes
+
+Two data attributes are supported for single switch. These data attributes have noe effect when using two switches.
+
+<dl>
+  <dt>data-sw-single-stay</dt>
+  <dd>Set this to true to stop scanning when the element is highlighted. The user has to click the single switch to start scanning/move forward</dd>
+  <dt>data-sw-single-noaction</dt>
+  <dd>Set this to true to skip triggering actions on the element. Unless this option is set, the user have to press twice to move away from a field. First click will activate, second will move</dd>
+</dl>
+
+
+#### Example
+
+```html
+  <div class="switch-element-1" data-sw-single-stay="true">
+    <a href"#test">Switch element 1, which will trigger #test anchor and then move to next element upon click</a>
+  </div>
+  <div class="switch-element-1" data-sw-single-stay="true" data-sw-single-noaction>
+    <a href="#test">Switch element 1, first click will move. Anchor #test will never be triggered for single switch.</a>
+  </div>
+```
+
 ## Events
 
 There are four events dispatched that can be listened to:

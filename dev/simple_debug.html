@@ -12,9 +12,9 @@
         <a href="#switch-element-anchor-1">a link inside "div" switch-element-1</a>
       </div>
       <a href="#switch-element-anchor-2" class="switch-element-2">link is switch-element-2</a>
-      <p class="switch-element-3"><a href="#switch-element-anchor-3">link inside "p" switch-element-3</a></p>
+      <p class="switch-element-3" data-sw-single-stay="true" data-sw-single-noaction="true"><a href="#switch-element-anchor-3">Single switch no action and stay on element</a></p>
     </div>
-    <div class="largebox switch-element-4"><a href="#switch-element-anchor-4">link inside a "div" with class .largebox and it's switch-element-4</a></div>
+    <div class="largebox switch-element-4" data-sw-single-stay="true"><a href="#switch-element-anchor-4">Single switch stay on element</a></div>
 
     <pre class="output" id="switch-element-notifier-area">No switch elements triggered yet...</pre>
 
@@ -35,7 +35,9 @@
     switch_access = new SwitchAccess({
       debug: true,
       switches: { 
-        number_of_switches: 2,
+        number_of_switches: 1,
+        delay_for_allowed_keypress: 0,
+        single_switch_move_time: 1000,        
         // delay_before_activating_element: 1000
       }
     });
