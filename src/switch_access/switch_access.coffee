@@ -3,7 +3,7 @@ Switch Access for webpages
 (c) 2012 Leif Ringstad
 Dual-licensed under GPL or commercial license (LICENSE and LICENSE.GPL)
 Source: http://github.com/leifcr/switch_access
-v 1.1.5
+v 1.1.7
 ###
 
 SwitchAccessCommon =
@@ -305,8 +305,10 @@ class SwitchAccess
         parent_idx:       0     # the last idx on the parent before moving into the group
       action_triggered:   false # set to true if an action is triggered
       keypress_allowed:   true  # keypress allowed or not
-      timers:
-        single_switch_id: null  # The id of the single switch timer
+      single_switch:
+        timer_id: null            # The id of the single switch timer
+        running: false            # if the timer is running or not
+        activate_triggered: false # if the activate action has been triggered
 
       highlighter_holder: null  # The highlighter holder as a jquery object
     
@@ -532,6 +534,7 @@ class SwitchAccess
   moveToNext: ->
     @log "moveToNext Current: I: #{@runtime.element.next_idx} L: #{@runtime.element.level} Next: I: #{@runtime.element.next_idx} L: #{@runtime.element.next_level}" if (@options.debug)
     @runtime.action_triggered = true
+    @runtime.single_switch.activate_triggered = false
 
     # return if current level and idxs are equal
     return false if (@runtime.element.next_level == @runtime.element.level) and (@runtime.element.idx == @runtime.element.next_idx)
@@ -561,6 +564,11 @@ class SwitchAccess
     @runtime.element.level   = @runtime.element.next_level
     @runtime.current_list    = list_n
     @runtime.element.current = list_n[@runtime.element.idx]
+
+    # check if this is a "stay-element" and it's single switch
+    if (@options.switches.number_of_switches == 1)
+      if @runtime.element.current.jq_element().data("sw-single-stay") == true
+        @stopSingleSwitchTimer()
 
     @makeElementVisible()
     return true
@@ -636,21 +644,28 @@ class SwitchAccess
   activateElementCallBack: ->
     @log "activateElementCallBack" if (@options.debug)
 
-    # see if the element has children, if so go into level
-    if @runtime.element.current.children().length > 0
+    # see if the element has more than 1 child, if so go into level
+    if @runtime.element.current.children().length > 1
       @startSingleSwitchTimer()
       return @moveToNextLevel()
     # else the element should "activate"
 
-    if ((@runtime.element.current.jq_element().is("a")) || (@activate_first_link == false))
-      element_to_click = @runtime.element.current.jq_element()
+    # choose correct element to "activate"
+    # first child if there is one
+    if @runtime.element.current.children().length == 1
+      el = @runtime.element.current.jq_element()[0]
+    else # activate the current element
+      el = @runtime.element.current.jq_element()
+
+    if ((el.is("a")) || (@activate_first_link == false))
+      element_to_click = el
     else
       # if element isn't a link, find first link within element and go to the url/trigger it
-      element_to_click = @runtime.element.current.jq_element().find("a")
+      element_to_click = el.find("a")
 
     # safety catch
     if (element_to_click.length <= 0)
-      element_to_click = @runtime.element.current.jq_element()
+      element_to_click = el
 
     @log "Triggering Element: IDX: #{@runtime.element.current_idx} Element Tag: #{$(element_to_click).get(0).tagName.toLowerCase()} Text: #{$(element_to_click).text()}" if (@options.debug)
 
@@ -662,7 +677,7 @@ class SwitchAccess
       if (@options.switches.number_of_switches == 1)
         @runtime.next_element_idx = -1 if (@options.single_switch_restart_on_activate)
         @runtime.next_level       = 0
-        @startSingleSwitchTimer()
+        # @startSingleSwitchTimer()
     else
       msg = "Nothing to do. Verify options passed to SwitchAccess"
       @log msg, "warn" if (@options.debug)
@@ -699,7 +714,17 @@ class SwitchAccess
         if !@runtime.keypress_allowed
           event.stopPropagation()
           return false
-        action = @activateElement()
+        # check if stayed at element and if element has "trigger" action
+        if @runtime.element.current.jq_element().data("sw-single-stay") == true 
+          if @runtime.element.current.jq_element().data("sw-single-noaction") == true or @runtime.single_switch.activate_triggered == true
+            action = @moveToNextElementAtLevel()
+            if @runtime.element.current.jq_element().data("sw-single-stay") != true
+              @startSingleSwitchTimer()
+          else
+            @runtime.single_switch.activate_triggered = true
+
+        if action == 0
+          action = @activateElement()
 
     else if @options.switches.number_of_switches == 2
       if (event.which in @options.switches.keys_2[0]) || (event.which in @options.switches.keys_2[1])
@@ -736,12 +761,14 @@ class SwitchAccess
   startSingleSwitchTimer: ->
     return unless @options.switches.number_of_switches == 1
     @log "startSingleSwitchTimer", "trace" if (@options.debug)
-    @runtime.single_switch_timer_id = window.setInterval(( => @singleSwitchTimerCallback();return), @options.switches.single_switch_move_time)
+    @runtime.single_switch.timer_id = window.setInterval(( => @singleSwitchTimerCallback();return), @options.switches.single_switch_move_time)
+    @runtime.single_switch.running = true
 
   stopSingleSwitchTimer: ->
     return unless @options.switches.number_of_switches == 1
     @log "stopSingleSwitchTimer", "trace" if (@options.debug)
-    window.clearInterval(@runtime.single_switch_timer_id)
+    window.clearInterval(@runtime.single_switch.timer_id)
+    @runtime.single_switch.running = false
 
   removeCallbacks: ->
     @log "removeCallbacks", "trace" if (@options.debug)
