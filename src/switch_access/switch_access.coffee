@@ -1,9 +1,9 @@
 ###
 Switch Access for webpages
-(c) 2012 Leif Ringstad
+(c) 2012-2013 Leif Ringstad
 Dual-licensed under GPL or commercial license (LICENSE and LICENSE.GPL)
 Source: http://github.com/leifcr/switch_access
-v 1.1.7
+v 1.1.8
 ###
 
 SwitchAccessCommon =
@@ -23,7 +23,7 @@ SwitchAccessCommon =
       Default: true
       ###
       use:                      true
-      
+
       ###
       Additional content for the highlighter
       Note: The content is placed within every highlighter and multiple
@@ -33,7 +33,7 @@ SwitchAccessCommon =
       Default: ""
       ###
       content:                  ""
-      
+
       ###
       Class for the highlighter
       Default: "highlighter"
@@ -52,7 +52,7 @@ SwitchAccessCommon =
       Default: "activate"
       ###
       activate_class:           "activate"
-      
+
       ###
       Margin between the highlighter and the element
       Default: 5
@@ -63,7 +63,7 @@ SwitchAccessCommon =
       Selector to set size on. (Change in case you have content inside the highlighter you wish to highlight)
       ###
       selector_for_set_to_size: ".highlighter"
-      
+
       ###
       Use CSS watch to watch the element for changes in position and dimensions
       This is only needed if you have javascript or other DOM elements
@@ -72,13 +72,13 @@ SwitchAccessCommon =
       ###
       watch_for_resize:         false
       # use_size_position_check:  true
-      
+
       ###
       The ID for the holder for all highlighters. Unlikely to need changing
       Default: "sw-highlighter-holder"
       ###
       holder_id:               "sw-highlighter-holder"
-      
+
       ###
       Read out the z-index for the element to be highlighted and set to 1 less than the value specified
       on the element.
@@ -120,7 +120,7 @@ SwitchAccessCommon =
       Default: "sw-elem"
       ###
       unique_element_data_attribute: "sw-elem"
-      
+
       ###
       Set a unique class on each element
       Default: false
@@ -176,15 +176,15 @@ class SwitchAccess
         Default: [[32, 9], [13]] (9 = 'Tab, 32 = 'Space', 13 = 'Enter')
         ###
         keys_2:                              [[9, 32], [13]] # Tab + Space / Enter
-        
+
         #keys_3:                             # forward/backward and select
-        
+
         ###
         Time for single switch scanning to move from element to element
         Default: 1500 milliseconds
         ###
         single_switch_move_time:             1500
-        
+
         ###
         If the single switch movement should restart/go to index 0 when restarted
         Default: true
@@ -233,7 +233,7 @@ class SwitchAccess
       ###
       # Use .search where you have class="search" or #search for id="search" (jQuery selectors)
       key_filter_skip:        [".search"]
-      
+
       ###
       If set to true, the first link within the element is "clicked".
       Else the actual element is clicked.
@@ -311,10 +311,10 @@ class SwitchAccess
         activate_triggered: false # if the activate action has been triggered
 
       highlighter_holder: null  # The highlighter holder as a jquery object
-    
+
     @setoptions(options)
     @init()
-  
+
   init: ->
     if (@options.debug)
       appender = null
@@ -524,7 +524,7 @@ class SwitchAccess
     if @runtime.element.next_level < 0
       @runtime.element.next_level = 0
       @runtime.element.next_idx = 0
-    
+
     if @moveToNext()
       @runtime.element.current.jq_element().triggerHandler("switch-access-leave-group", [@runtime.element.idx, @runtime.element.level, @runtime.element.current])
       return SwitchAccessCommon.actions.moved_to_previous_level
@@ -653,7 +653,7 @@ class SwitchAccess
     # choose correct element to "activate"
     # first child if there is one
     if @runtime.element.current.children().length == 1
-      el = @runtime.element.current.jq_element()[0]
+      el = $(@runtime.element.current.jq_element()[0]) # This might not always be a jquery object.
     else # activate the current element
       el = @runtime.element.current.jq_element()
 
@@ -715,7 +715,7 @@ class SwitchAccess
           event.stopPropagation()
           return false
         # check if stayed at element and if element has "trigger" action
-        if @runtime.element.current.jq_element().data("sw-single-stay") == true 
+        if @runtime.element.current.jq_element().data("sw-single-stay") == true
           if @runtime.element.current.jq_element().data("sw-single-noaction") == true or @runtime.single_switch.activate_triggered == true
             action = @moveToNextElementAtLevel()
             if @runtime.element.current.jq_element().data("sw-single-stay") != true
@@ -804,9 +804,9 @@ class SwitchAccessElement
 
 
     @runtime.highlight_holder = if highlight_holder == null then $('body') else highlight_holder
-    
+
     @init(@runtime.highlight_holder)
-  
+
   init: (highlight_holder)->
     @uniqueDataAttr(true)
     @createHighlighter(highlight_holder)
@@ -894,7 +894,7 @@ class SwitchAccessElement
     if @children().length > 0 and check_children == true
       child.removeHighlight(false) for child in @children()
       return
-      
+
     @runtime.jq_element.removeClass(SwitchAccessCommon.options.highlight.element.current_class)
     @runtime.jq_element.removeClass(SwitchAccessCommon.options.highlight.element.activate_class)
     return unless SwitchAccessCommon.options.highlighter.use
@@ -947,7 +947,7 @@ class SwitchAccessElement
   setHighlighterSize: (element, highlighter) ->
     w  = element.outerWidth(false)  + (SwitchAccessCommon.options.highlighter.margin_to_element * 2)
     h  = element.outerHeight(false) + (SwitchAccessCommon.options.highlighter.margin_to_element * 2)
-   
+
     highlighter.width(w)
     highlighter.height(h)
     @log "setHighlighterSize w: #{w}, h: #{h}", "trace" if (@options.debug)
@@ -971,7 +971,7 @@ class SwitchAccessElement
       # check if content contains selector to use for resizeing
       if @runtime.jq_highlighter.find(SwitchAccessCommon.options.highlighter.selector_for_set_to_size).length == 0
         @runtime.jq_highlighter.addClass(SwitchAccessCommon.options.highlighter.selector_for_set_to_size)
-  
+
   ###
   Destroy the highlighter DOM object
   ###
