@@ -32,7 +32,7 @@ build = (directories, output, extra_options) ->
   else if typeof directories == 'object'
     if directories.length > 0
       args = args.concat directories
-  else 
+  else
     print "Critical: Missing directories/files for input!"
     return
 
@@ -67,7 +67,7 @@ task 'build:library', 'Build library', ->
 
 task 'build:tests', 'Build library', ->
   print "Compiling tests\n"
-  build('./src/unit', 'lib/unit', '')
+  build('src/unit', 'lib/unit', ['--join',"#{library_name}_test.js"])
 
 task 'build:examples', 'Build examples', ->
   print "Compiling examples\n"
