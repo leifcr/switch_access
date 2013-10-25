@@ -1,0 +1,90 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>Switch access for webpages using coffeescript</title>
+  <link rel="stylesheet" type="text/css" href="../shared/example.css">
+</head>
+<body>
+  <div class="container">
+    <h1>switch_access Example</h1>
+    <h2>Elements within groups and single switch, scan time 1 second</h2>
+    <p>This example shows how switch-elements can be grouped and navigated.</p>
+    <p><a href="index.html">Back to list over examples.</a>
+    <p>Use "Space" or "Enter" to trigger the "activate" action. <!-- Or change the settings below.  -->
+    <div class="switch-objects-container">
+      <div class="switch_element_group switch-element-1">
+        <div class="description">switch-element-1 with children</div>
+        <div class="switch-element-1">
+          <a href="./index.html">Back to list over examples</a>
+        </div>
+        <div class="switch-element-2">
+          <a href="#switch-element-anchor-1-2">a link inside "div" switch-element-2 inside group switch-element 1</a>
+        </div>
+        <div class="switch-element-3">
+          <a href="#switch-element-anchor-1-3">a link inside "div" switch-element-3 inside group switch-element 1</a>
+        </div>
+      </div>
+      <div class="switch_element_group switch-element-2">
+        <div class="description">switch-element-2 with children</div>
+        <div class="switch-element-1">
+          <a href="#switch-element-anchor-2-1">a link inside "div" switch-element-1 inside group switch-element 2</a>
+        </div>
+        <div class="switch-element-2">
+          <a href="#switch-element-anchor-2-2">a link inside "div" switch-element-2 inside group switch-element 2</a>
+        </div>
+        <div class="switch-element-3">
+          <a href="#switch-element-anchor-2-3">a link inside "div" switch-element-3 inside group switch-element 2</a>
+        </div>
+      </div>
+      <div class="sw_holder">
+        <div>Elements outside of groups</div>
+        <a href="#switch-element-anchor-3" class="switch-element-3">link is switch-element-3</a>
+        <p class="switch-element-4"><a href="#switch-element-anchor-4">link inside "p" switch-element-4</a></p>
+      </div>
+    </div>
+
+    <pre class="output right_side_output" id="switch-element-notifier-area">No switch elements triggered yet...</pre>
+
+  </div>
+
+<div id="outerlogger" style="visibility: hidden;">
+  <h3>Log</h3>
+  <div id="logger"></div>
+</div>
+</body>
+<script src="../shared/jquery-1.8.2.min.js"></script>
+<script src="../shared/log4javascript.js"></script>
+<script src="../lib/switch_access.js"></script>
+<!-- <script src="./test.js"></script> -->
+<script type="text/javascript">
+  $(document).ready(function(){
+    window.switch_access = new SwitchAccess({
+      switches: { 
+        number_of_switches: 1,
+        single_switch_move_time: 1000
+        // delay_before_activating_element: 1000
+      }
+    });
+  $("[class*="+window.switch_access.options.dom.element_class+"]").on("switch-access-activate", function(event, param1, param2, param3, param4) {
+    var text = "Activated: idx: "+ param1 + " level: " + param2;
+    text    += "\nClicked Element:" + param3.get(0).tagName.toLowerCase();
+    text    += "\nID: " + param4.uniqueDataAttr();
+    if (param3.is("a")) {
+      text += "\nhref:" + param3.attr("href");
+    }
+    $(".output").text(text);
+  });
+  $("[class*="+window.switch_access.options.dom.element_class+"]").on("switch-access-move", function(event, param1, param2, param3) {
+    $(".output").text("Moved to: idx: "+ param1 + " level: " + param2 + "\nID: " + param3.uniqueDataAttr());
+  });
+  $("[class*="+window.switch_access.options.dom.element_class+"]").on("switch-access-enter-group", function(event, param1, param2) {
+    $(".output").text("Entered Group: idx: "+ param1 + " level: " + param2);
+  });
+  $("[class*="+window.switch_access.options.dom.element_class+"]").on("switch-access-leave-group", function(event, param1, param2) {
+        $(".output").text("Left Group: idx: "+ param1 + " level: " + param2);
+  });
+
+  });
+</script>
+</html>
+

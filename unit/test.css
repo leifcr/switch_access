@@ -1,0 +1,15 @@
+/* Border size change */
+.test-border-width1 { border: 5px solid black; }
+.test-border-width2 { border: 10px solid black; }
+
+/* position */
+.test-position1 {position: relative; top: 10px; left: 10px;}
+.test-position2 {position: relative; top: 50px; left: 40px;}
+
+/* size */
+.test-size1 {width:100px; height: 100px;}
+.test-size2 {width:200px; height: 200px;}
+
+#githubsource {
+  color:black;
+}

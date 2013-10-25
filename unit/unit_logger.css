@@ -1,0 +1,29 @@
+#outerlogger {
+  border-radius: 20px;
+  border:1px solid #CCD;
+  background-color: #CCD;
+  position:absolute;
+  right:5px;
+  top:5%;
+  width:600px;
+  height:90%;
+  float:right;
+  opacity: 0.8;
+  padding:10px;
+  display: none;
+}
+#outerlogger #logger{
+  height:92%;
+}
+
+#outerlogger h3 {
+  border:#999 solid 1px;
+  background-color: #fff;
+  width:100px;
+  padding:5px;
+  margin: 0px 0 10px 0;
+  border-radius:10px;
+  text-align: center;
+  height: 20px;
+}
+
