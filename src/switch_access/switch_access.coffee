@@ -3,7 +3,7 @@ Switch Access for webpages
 (c) 2012-2013 Leif Ringstad
 Dual-licensed under GPL or commercial license (LICENSE and LICENSE.GPL)
 Source: http://github.com/leifcr/switch_access
-v 1.1.8
+v 1.1.9
 ###
 
 SwitchAccessCommon =
@@ -341,7 +341,7 @@ class SwitchAccess
     @log "setoptions" if (@options.debug)
     # @log options, "trace", true
     @stop() if @runtime.active == true
-    jQuery.extend SwitchAccessCommon.options, {
+    jQuery.extend true, SwitchAccessCommon.options, {
       highlighter: options.highlighter,
       highlight:   options.highlight,
       internal:    options.internal,
