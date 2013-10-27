@@ -1002,10 +1002,14 @@ class SwitchAccessElement
           left:   "offset().left"
           bottom: "offset().bottom"
           right:  "offset().right"
-          outerwidth:  "outerWidth(false)"
-          outerheight: "outerHeight(false)"
+          width:  "outerWidth(false)"
+          height: "outerHeight(false)"
+          # width:  "width()"
+          # height: "height()"
           }
-        callback: (->@callbackForResize????)
+        callback: (=>
+          @callbackForResize()
+          )
         })
 
   ###
