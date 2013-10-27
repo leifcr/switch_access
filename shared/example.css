@@ -55,7 +55,7 @@ div.switch-objects-container {
 
 [class*="switch-element"] [class*="switch-element"] {
   /*width:120px;*/
-  height:80px;  
+  height:80px;
 }
 
 [class*="switch-element"].current {
@@ -70,7 +70,7 @@ div.switch-objects-container {
 
 [class*="switch-element"] {
   float:left;
-  /*position: relative;*/
+  position: relative;
   margin: 10px;
   border:#999 solid 5px;
   width: 100px;
