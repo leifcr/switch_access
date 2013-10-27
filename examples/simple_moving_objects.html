@@ -6,41 +6,39 @@
 </head>
 <body>
   <div class="container">
-    <h1>switch_access Examples</h1>
-    <h3>Give AAC/switch users switch/keyboard navigation on your webpage with highlighing and other neat functions</h3>
-    <p>If you have a webpage where you want to provide accessability with switch control. Simply add the coffeescript or compiled javascript to your webpage and add elements with class "switch-element-1", "switch-element-2" etc.</p>
-    <p> Feedback to <a href="http://twitter.com/leifcr">@leifcr</a>
-    <br>Source: <a href="http://github.com/leifcr/switch_access">Github</a>
-    <br>Documentation: <a href="http://github.com/leifcr/switch_access">Github (Readme.md)</a></p>
-
+    <h1>switch_access Example</h1>
+    <h2>Simple example with various dom elements</h2>
+    <p><a href="index.html">Back to list over examples.</a>
     <p>Use "Space" and "Enter" to move around and trigger actions. <!-- Or change the settings below.  -->
+    <p>
+      Moving/resizing of objects can be triggered with either mouse or switch.
+    </p>
     <div class="switch-objects-container">
       <div class="switch-element-1">
-        <a href="./simple.html">Simple example (two switches)</a>
+        <a href="./index.html">Back to list over examples</a>
       </div>
-      <div class="switch-element-2">
-        <a href="./simple_single_switch.html">Simple example (one switch)</a>
-      </div>
-      <div class="switch-element-3">
-        <a href="./large_simple.html">Large example with scrolling (two switches)</a>
-      </div>
-      <div class="switch-element-4">
-        <a href="./group_example.html">Group example (two switches)</a>
-      </div>
-      <div class="switch-element-5">
-        <a href="./group_example_delay.html">Group example with delay (two switches)</a>
-      </div>
-      <div class="switch-element-6">
-        <a href="./group_single_switch.html">Group example (one switch)</a>
-      </div>
-      <div class="switch-element-7">
-        <a href="./simple.html">Example with elements that change position/size (two switches)</a>
-      </div>
+      <a href="#switch-element-anchor-2" id="do-grow" class="switch-element-2">Click to resize me</a>
+      <a href="#switch-element-anchor-3" id="do-move" class="switch-element-3">Click to move me</a>
     </div>
+    <div class="largebox switch-element-4"><a href="#switch-element-anchor-4">link inside a "div" with class .largebox and it's switch-element-4</a></div>
 
-    <pre class="output right_side_output" id="switch-element-notifier-area">No switch elements triggered yet...</pre>
+    <pre class="output" id="switch-element-notifier-area">No switch elements triggered yet...</pre>
 
+    <p>How SwitchAccess is initialized in this example: </p>
+    <pre class="initdata">
+    $(document).ready(function(){
+      window.switch_access = new SwitchAccess({
+      highlighter: {
+        watch_for_resize: true
+      },
+      switches: {
+        number_of_switches: 2,
+      }
+      });
+    });
+    </pre>
   </div>
+  <!-- <p><a href="large_example.html">Large example which shows scrolling support (Might not do that on a 27"...).</a> -->
 
 <div id="outerlogger" style="visibility: hidden;">
   <h3>Log</h3>
@@ -54,9 +52,12 @@
 <script type="text/javascript">
   $(document).ready(function(){
     window.switch_access = new SwitchAccess({
+      // debug: true,
+      highlighter: {
+        watch_for_resize: true
+      },
       switches: {
         number_of_switches: 2,
-        // delay_before_activating_element: 1000
       }
     });
   $("[class*="+window.switch_access.options.dom.element_class+"]").on("switch-access-activate", function(event, param1, param2, param3, param4) {
@@ -77,6 +78,39 @@
   $("[class*="+window.switch_access.options.dom.element_class+"]").on("switch-access-leave-group", function(event, param1, param2) {
         $(".output").text("Left Group: idx: "+ param1 + " level: " + param2);
   });
+
+  $('#do-grow').click(function() {
+    if ($('#do-grow').width() < 200) {
+      $('#do-grow').animate({
+        'width': '200px',
+        'height': '200px'
+      }, 500);
+    } else {
+      $('#do-grow').animate({
+        'width': '100px',
+        'height': '100px'
+      }, 500);
+    }
+    return false;
+  });
+  var original_pos = true;
+  $('#do-move').click(function() {
+    if (original_pos === true) {
+      original_pos = false;
+      $('#do-move').animate({
+        'top': '50px',
+        'left': '50px'
+      }, 500);
+    } else {
+      original_pos = true;
+      $('#do-move').animate({
+        'top': '0px',
+        'left': '0px'
+      }, 500);
+    }
+    return false;
+  });
+
 
   });
 </script>
