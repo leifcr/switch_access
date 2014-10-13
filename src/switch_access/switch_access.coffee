@@ -3,7 +3,7 @@ Switch Access for webpages
 (c) 2012-2013 Leif Ringstad
 Dual-licensed under GPL or commercial license (LICENSE and LICENSE.GPL)
 Source: http://github.com/leifcr/switch_access
-v 1.1.10
+v 1.1.12
 ###
 
 SwitchAccessCommon =
@@ -375,7 +375,7 @@ class SwitchAccess
       not_str += " [class*=#{@options.dom.element_class}]"
       i++
 
-    temp_list = jq_element.find("[class*=#{@options.dom.element_class}]").not(not_str)
+    temp_list = jq_element.find("[class*=#{@options.dom.element_class}]:visible").not(not_str)
     @log "buildListFromjqElement - element count #{temp_list.length} depth: #{depth} element-classes:#{jq_element.attr("class")}", "trace" if (@options.debug)
     return [] if temp_list.length <= 0
     # warn if there are any elements that don't have any numbers
