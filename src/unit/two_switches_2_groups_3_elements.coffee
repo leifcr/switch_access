@@ -64,6 +64,12 @@ QUnit.test 'It should move back to the group and highlight the three children', 
   equal $('.switch-element-1.test-group').find("[class*=switch-element-]").hasClass('current'), true
   return
 
+QUnit.test 'It should add .current_group to the group when activationg it', 2, ->
+  equal $('.switch-element-1.test-group').hasClass('current_group'), true
+  Helper.trigger_key_event(32)
+  equal $('.switch-element-2.test-group').hasClass('current_group'), true
+  return
+
 # Cannot test links in firefox/mozilla, but if callbacks work, links work
 if typeof(jQuery.browser.mozilla) == "undefined"
   QUnit.test 'It should activate the link on the third element in the second group', 1, ->

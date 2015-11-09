@@ -1,9 +1,9 @@
 ###
 Switch Access for webpages
-(c) 2012-2013 Leif Ringstad
+(c) 2012-2015 Leif Ringstad
 Dual-licensed under GPL or commercial license (LICENSE and LICENSE.GPL)
 Source: http://github.com/leifcr/switch_access
-v 1.1.10
+v 1.1.11
 ###
 
 SwitchAccessCommon =
@@ -45,6 +45,12 @@ SwitchAccessCommon =
       Default: "current"
       ###
       current_class:            "current"
+
+      ###
+      The class when a group is active/currently selected
+      Default: "current"
+      ###
+      group_current_class:      "current_group"
 
       ###
       The class when set on a highlighter when activated action is triggered
@@ -99,6 +105,12 @@ SwitchAccessCommon =
         Default: "current"
         ###
         current_class:         "current"
+
+        ###
+        The class when a group is active/currently selected
+        Default: "current"
+        ###
+        group_current_class:      "current_group"
 
         ###
         The class when set on a switch-element when activated
@@ -208,6 +220,12 @@ class SwitchAccess
         Default: true
         ###
         groups:                              true
+
+        ###
+        Set css class on group when highlighting
+        Default: true
+        ###
+        groups_highlight_class:              true
 
       ###
       DOM options
@@ -338,8 +356,6 @@ class SwitchAccess
     @start()
 
   setoptions: (options) ->
-    @log "setoptions" if (@options.debug)
-    # @log options, "trace", true
     @stop() if @runtime.active == true
     jQuery.extend true, SwitchAccessCommon.options, {
       highlighter: options.highlighter,
@@ -508,7 +524,6 @@ class SwitchAccess
     if @runtime.element.current.children().length > 1
       @runtime.element.next_level = @runtime.element.level + 1
       @runtime.element.next_idx   = 0
-      # return SwitchAccessCommon.actions.stayed_at_element
 
     if @moveToNext()
       @runtime.element.current.parent().jq_element().triggerHandler("switch-access-enter-group", [@runtime.element.idx, @runtime.element.level, @runtime.element.current])
@@ -520,7 +535,7 @@ class SwitchAccess
     @log "moveToPreviousLevel", "trace" if (@options.debug)
     @runtime.element.next_level = @runtime.element.level - 1
     @runtime.element.next_idx = @runtime.element.parent_idx
-    # safety catch impossible levelss
+    # safety catch impossible levels
     if @runtime.element.next_level < 0
       @runtime.element.next_level = 0
       @runtime.element.next_idx = 0
@@ -861,6 +876,8 @@ class SwitchAccessElement
     @log "highlight" if (@options.debug)
     # if the element has children, it's most likely that the children should be highlighted
     if @children().length > 0 and check_children == true
+      # In any case add the 'group' highlight class
+      @runtime.jq_element.addClass(SwitchAccessCommon.options.highlight.element.group_current_class)
       child.highlight(false) for child in @children()
       return
 
@@ -892,6 +909,8 @@ class SwitchAccessElement
 
     # if set to check for children:
     if @children().length > 0 and check_children == true
+      # Remove the group class if set
+      @runtime.jq_element.removeClass(SwitchAccessCommon.options.highlight.element.group_current_class)
       child.removeHighlight(false) for child in @children()
       return
 
