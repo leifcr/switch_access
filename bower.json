@@ -1,0 +1,38 @@
+{
+  "name": "switch_access",
+  "version": "1.1.11",
+  "homepage": "https://github.com/leifcr/switch_access",
+  "authors": [
+    { "name": "Leif Ringstad", "email": "leifcr@gmail.com"," homepage": "http://bitelm.com" }
+  ],
+  "description": "Switch Access (AAC) for your website",
+  "main": ["lib/switch_access.js"],
+  "keywords": [
+    "js",
+    "javascript",
+    "aac"
+  ],
+  "ignore": [
+    "**/.*",
+    "dev",
+    "lib/unit/switch_access_test.js",
+    "examples",
+    "shared",
+    "build",
+    "unit",
+    "src",
+    "Cakefile",
+    "component.json",
+    "*.sublime-project"
+  ],
+  "license": "BSD-2-Clause-FreeBSD",
+  "dependencies": {
+    "jquery-csswatch": ">=1.3.0",
+    "jquery": ">= 1.9",
+    "json2":"latest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/leifcr/switch_access.git"
+  }
+}

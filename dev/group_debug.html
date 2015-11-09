@@ -7,17 +7,12 @@
 <body>
   <div class="container">
     <div class="switch-access-container">
-      <h1>switch_access Example</h1>
-      <h2>Elements within groups with activation delay of 1 second (red frame is shown before triggering an action)</h2>
-      <p>This example shows how switch-elements can be grouped and navigated and have a delay when activating</p>
-      <p><a href="index.html">Back to list over examples.</a>
-      <p>Use "Space" and "Enter" to move around and trigger actions. <!-- Or change the settings below.  -->
-
+      <h3>Example</h3>
       <div class="switch-objects-container">
         <div class="switch_element_group switch-element-1">
           <div class="description">switch-element-1 with children</div>
           <div class="switch-element-1">
-            <a href="./index.html">Back to list over examples</a>
+            <a href="#switch-element-anchor-1-1">a link inside "div" switch-element-1 inside group switch-element 1</a>
           </div>
           <div class="switch-element-2">
             <a href="#switch-element-anchor-1-2">a link inside "div" switch-element-2 inside group switch-element 1</a>
@@ -39,16 +34,16 @@
           </div>
         </div>
         <div class="sw_holder">
-          <div>Elements outside of groups</div>
           <a href="#switch-element-anchor-3" class="switch-element-3">link is switch-element-3</a>
           <p class="switch-element-4"><a href="#switch-element-anchor-4">link inside "p" switch-element-4</a></p>
         </div>
       </div>
+      <div class="largebox switch-element-5"><a href="#switch-element-anchor-5">link inside a "div" with class .largebox and it's switch-element-5</a></div>
     </div>
 
     <div class="outputcontainer">
       <pre id='output' class="output">No switch elements triggered yet...</pre>
-      <div id="outerlogger" style="visibility: hidden;">
+      <div id="outerlogger">
         <h3>Log</h3>
         <div id="logger"></div>
       </div>
@@ -62,9 +57,15 @@
 <script type="text/javascript">
   $(document).ready(function(){
     window.switch_access = new SwitchAccess({
+      debug: true,
       switches: {
         number_of_switches: 2,
-        delay_before_activating_element: 1000
+        delay_before_activating_element: 0,
+        groups: false,
+        delay_for_allowed_keypress: 0,
+      },
+      visual: {
+        ensure_visible_element: false
       }
     });
   $("[class*="+window.switch_access.options.dom.element_class+"]").on("switch-access-activate", function(event, param1, param2, param3, param4) {

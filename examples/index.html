@@ -6,46 +6,48 @@
 </head>
 <body>
   <div class="container">
-    <h1>switch_access Examples</h1>
-    <h3>Give AAC/switch users switch/keyboard navigation on your webpage with highlighing and other neat functions</h3>
-    <p>If you have a webpage where you want to provide accessability with switch control. Simply add the coffeescript or compiled javascript to your webpage and add elements with class "switch-element-1", "switch-element-2" etc.</p>
-    <p> Feedback to <a href="http://twitter.com/leifcr">@leifcr</a>
-    <br>Source: <a href="http://github.com/leifcr/switch_access">Github</a>
-    <br>Documentation: <a href="http://github.com/leifcr/switch_access">Github (Readme.md)</a></p>
+    <div class="switch-access-container">
+      <h1>switch_access Examples</h1>
+      <h3>Give AAC/switch users switch/keyboard navigation on your webpage with highlighing and other neat functions</h3>
+      <p>If you have a webpage where you want to provide accessability with switch control. Simply add the coffeescript or compiled javascript to your webpage and add elements with class "switch-element-1", "switch-element-2" etc.</p>
+      <p> Feedback to <a href="http://twitter.com/leifcr">@leifcr</a>
+      <br>Source: <a href="http://github.com/leifcr/switch_access">Github</a>
+      <br>Documentation: <a href="http://github.com/leifcr/switch_access">Github (Readme.md)</a></p>
 
-    <p>Use "Space" and "Enter" to move around and trigger actions. <!-- Or change the settings below.  -->
-    <div class="switch-objects-container">
-      <div class="switch-element-1">
-        <a href="./simple.html">Simple example (two switches)</a>
-      </div>
-      <div class="switch-element-2">
-        <a href="./simple_single_switch.html">Simple example (one switch)</a>
-      </div>
-      <div class="switch-element-3">
-        <a href="./large_simple.html">Large example with scrolling (two switches)</a>
-      </div>
-      <div class="switch-element-4">
-        <a href="./group_example.html">Group example (two switches)</a>
-      </div>
-      <div class="switch-element-5">
-        <a href="./group_example_delay.html">Group example with delay (two switches)</a>
-      </div>
-      <div class="switch-element-6">
-        <a href="./group_single_switch.html">Group example (one switch)</a>
-      </div>
-      <div class="switch-element-7">
-        <a href="./simple_moving_objects.html">Example with elements that change position/size (two switches)</a>
+      <p>Use "Space" and "Enter" to move around and trigger actions. <!-- Or change the settings below.  -->
+      <div class="switch-objects-container">
+        <div class="switch-element-1">
+          <a href="./simple.html">Simple example (two switches)</a>
+        </div>
+        <div class="switch-element-2">
+          <a href="./simple_single_switch.html">Simple example (one switch)</a>
+        </div>
+        <div class="switch-element-3">
+          <a href="./large_simple.html">Large example with scrolling (two switches)</a>
+        </div>
+        <div class="switch-element-4">
+          <a href="./group_example.html">Group example (two switches)</a>
+        </div>
+        <div class="switch-element-5">
+          <a href="./group_example_delay.html">Group example with delay (two switches)</a>
+        </div>
+        <div class="switch-element-6">
+          <a href="./group_single_switch.html">Group example (one switch)</a>
+        </div>
+        <div class="switch-element-7">
+          <a href="./simple_moving_objects.html">Example with elements that change position/size (two switches)</a>
+        </div>
       </div>
     </div>
 
-    <pre class="output right_side_output" id="switch-element-notifier-area">No switch elements triggered yet...</pre>
-
+    <div class="outputcontainer">
+      <pre id='output' class="output">No switch elements triggered yet...</pre>
+      <div id="outerlogger" style="visibility: hidden;">
+        <h3>Log</h3>
+        <div id="logger"></div>
+      </div>
+    </div>
   </div>
-
-<div id="outerlogger" style="visibility: hidden;">
-  <h3>Log</h3>
-  <div id="logger"></div>
-</div>
 </body>
 <script src="../shared/jquery-1.8.2.min.js"></script>
 <script src="../shared/log4javascript.js"></script>
@@ -66,19 +68,18 @@
     if (param3.is("a")) {
       text += "\nhref:" + param3.attr("href");
     }
-    $(".output").text(text);
+    $("#output").text(text);
   });
   $("[class*="+window.switch_access.options.dom.element_class+"]").on("switch-access-move", function(event, param1, param2, param3) {
-    $(".output").text("Moved to: idx: "+ param1 + " level: " + param2 + "\nID: " + param3.uniqueDataAttr());
+    $("#output").text("Moved to: idx: "+ param1 + " level: " + param2 + "\nID: " + param3.uniqueDataAttr());
   });
   $("[class*="+window.switch_access.options.dom.element_class+"]").on("switch-access-enter-group", function(event, param1, param2) {
-    $(".output").text("Entered Group: idx: "+ param1 + " level: " + param2);
+    $("#output").text("Entered Group: idx: "+ param1 + " level: " + param2);
   });
   $("[class*="+window.switch_access.options.dom.element_class+"]").on("switch-access-leave-group", function(event, param1, param2) {
-        $(".output").text("Left Group: idx: "+ param1 + " level: " + param2);
+        $("#output").text("Left Group: idx: "+ param1 + " level: " + param2);
   });
 
   });
 </script>
 </html>
-

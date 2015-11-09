@@ -6,36 +6,40 @@
 </head>
 <body>
   <div class="container">
-    <h1>switch_access Example</h1>
-    <h2>Simple example with various dom elements</h2>
-    <p><a href="index.html">Back to list over examples.</a>    
-    <p>Use "Space" and "Enter" to move around and trigger actions. <!-- Or change the settings below.  -->
-    <div class="switch-objects-container">
-      <div class="switch-element-1">
-        <a href="./index.html">Back to list over examples</a>
+    <div class="switch-access-container">
+      <h1>switch_access Example</h1>
+      <h2>Simple example with various dom elements</h2>
+      <p><a href="index.html">Back to list over examples.</a>
+      <p>Use "Space" and "Enter" to move around and trigger actions. <!-- Or change the settings below.  -->
+      <div class="switch-objects-container">
+        <div class="switch-element-1">
+          <a href="./index.html">Back to list over examples</a>
+        </div>
+        <a href="#switch-element-anchor-2" class="switch-element-2">link is switch-element-2</a>
+        <p class="switch-element-3"><a href="#switch-element-anchor-3">link inside "p" switch-element-3</a></p>
       </div>
-      <a href="#switch-element-anchor-2" class="switch-element-2">link is switch-element-2</a>
-      <p class="switch-element-3"><a href="#switch-element-anchor-3">link inside "p" switch-element-3</a></p>
-    </div>
-    <div class="largebox switch-element-4"><a href="#switch-element-anchor-4">link inside a "div" with class .largebox and it's switch-element-4</a></div>
+      <div class="largebox switch-element-4"><a href="#switch-element-anchor-4">link inside a "div" with class .largebox and it's switch-element-4</a></div>
 
-    <pre class="output" id="switch-element-notifier-area">No switch elements triggered yet...</pre>
-
-    <p>How SwitchAccess is initialized in this example: </p>
-    <pre class="initdata">
-    $(document).ready(function(){
-      window.switch_access = new SwitchAccess({
-        debug: true,
-        number_of_switches: 2
+      <p>How SwitchAccess is initialized in this example: </p>
+      <pre class="initdata">
+      $(document).ready(function(){
+        window.switch_access = new SwitchAccess({
+          debug: true,
+          number_of_switches: 2
+        });
       });
-    });
-    </pre>
+      </pre>
+    </div>
+    <!-- <p><a href="large_example.html">Large example which shows scrolling support (Might not do that on a 27"...).</a> -->
   </div>
-  <!-- <p><a href="large_example.html">Large example which shows scrolling support (Might not do that on a 27"...).</a> -->
 
-<div id="outerlogger" style="visibility: hidden;">
-  <h3>Log</h3>
-  <div id="logger"></div>
+  <div class="outputcontainer">
+    <pre id='output' class="output">No switch elements triggered yet...</pre>
+    <div id="outerlogger" style="visibility: hidden;">
+      <h3>Log</h3>
+      <div id="logger"></div>
+    </div>
+  </div>
 </div>
 </body>
 <script src="../shared/jquery-1.8.2.min.js"></script>
@@ -46,7 +50,7 @@
   $(document).ready(function(){
     window.switch_access = new SwitchAccess({
       // debug: true,
-      switches: { 
+      switches: {
         number_of_switches: 2,
       }
     });
@@ -57,19 +61,18 @@
     if (param3.is("a")) {
       text += "\nhref:" + param3.attr("href");
     }
-    $(".output").text(text);
+    $("#output").text(text);
   });
   $("[class*="+window.switch_access.options.dom.element_class+"]").on("switch-access-move", function(event, param1, param2, param3) {
-    $(".output").text("Moved to: idx: "+ param1 + " level: " + param2 + "\nID: " + param3.uniqueDataAttr());
+    $("#output").text("Moved to: idx: "+ param1 + " level: " + param2 + "\nID: " + param3.uniqueDataAttr());
   });
   $("[class*="+window.switch_access.options.dom.element_class+"]").on("switch-access-enter-group", function(event, param1, param2) {
-    $(".output").text("Entered Group: idx: "+ param1 + " level: " + param2);
+    $("#output").text("Entered Group: idx: "+ param1 + " level: " + param2);
   });
   $("[class*="+window.switch_access.options.dom.element_class+"]").on("switch-access-leave-group", function(event, param1, param2) {
-        $(".output").text("Left Group: idx: "+ param1 + " level: " + param2);
+        $("#output").text("Left Group: idx: "+ param1 + " level: " + param2);
   });
 
   });
 </script>
 </html>
-
